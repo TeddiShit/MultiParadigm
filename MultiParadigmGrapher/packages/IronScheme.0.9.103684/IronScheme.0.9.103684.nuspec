@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>IronScheme</id>
+    <version>0.9.103684</version>
+    <authors>Llewellyn Pritchard</authors>
+    <owners>Llewellyn Pritchard</owners>
+    <projectUrl>http://ironscheme.codeplex.com/</projectUrl>
+    <iconUrl>http://ironscheme.net/logo-192.png</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Scheme on .NET
+TFS builds
+The last version number represent the TFS version
+Discuss @ http://ironscheme.codeplex.com/discussions/404918</description>
+    <releaseNotes>http://ironscheme.codeplex.com/SourceControl/changeset/103684</releaseNotes>
+    <copyright>Copyright 2007-2013</copyright>
+  </metadata>
+</package>

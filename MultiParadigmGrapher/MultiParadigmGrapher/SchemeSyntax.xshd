@@ -1,0 +1,250 @@
+<SyntaxDefinition name="Scheme" extensions=".sls;.sps;.ss;.scm" 
+     xmlns="http://icsharpcode.net/sharpdevelop/syntaxdefinition/2008">
+  <Color foreground="Orange" name="Comment" />
+  <Color foreground="Green" name="String" />
+  <Color foreground="LimeGreen" name="Digits"/>
+  <Color foreground="Blue" name="Syntax" />
+  <Color foreground="Blue" name="Library Syntax" />
+  <Color foreground="Blue" name="Auxilliary Syntax" />
+  <Color foreground="DarkMagenta" name="Procedure" />
+
+  <RuleSet>
+    <Import ruleSet="Expression"/>
+  </RuleSet>
+
+    <RuleSet name="Expression">
+        <Span color="Comment" multiline="false">
+            <Begin>;</Begin>
+        </Span>
+    <Span color="Comment" multiline="true" >
+      <Begin>\#\|</Begin>
+      <End>\|\#</End>
+    </Span>
+    <Span ruleSet="Expression" multiline="true" >
+      <Begin fontWeight="bold">\(</Begin>
+      <End fontWeight="bold">\)</End>
+    </Span>
+    <Span  ruleSet="Expression" multiline="true">
+      <Begin fontWeight="bold">\#\(</Begin>
+      <End fontWeight="bold">\)</End>
+    </Span>
+	
+	<Span color="String">
+		<Begin>"</Begin>
+		<End>"</End>
+		<RuleSet>
+			<!-- nested span for escape sequences -->
+			<Span begin="\\" end="." />
+		</RuleSet>
+	</Span>
+
+    <Keywords color="Library Syntax">
+      <Word>import</Word>
+      <Word>export</Word>
+      <Word>library</Word>
+    </Keywords>
+
+    <Keywords color="Syntax">
+      <Word>define</Word>
+	  <Word>define-syntax</Word>
+	  <Word>\.\.\.</Word>
+	  <Word>assert</Word>
+      <Word>set!</Word>
+      <Word>lambda</Word>
+      <Word>begin</Word>
+      <Word>if</Word>
+	  <Word>unless</Word>
+	  <Word>when</Word>
+	  <Word>case</Word>
+	  <Word>parameterize</Word>
+	  <Word>or</Word>
+	  <Word>and</Word>
+	  <Word>not</Word>
+      <Word>cond</Word>
+	  <Word>do</Word>
+	  <Word>for-each</Word>
+      <Word>let</Word>
+	  <Word>let\*</Word>
+      <Word>letrec</Word>
+	  <Word>letrec-syntax</Word>
+	  <Word>let-syntax</Word>
+	  <Word>syntax</Word>
+	  <Word>quote</Word>
+	  <Word>#t</Word>
+	  <Word>#f</Word>
+	  <Word>*</Word>
+	  <Word>+</Word>
+	  <Word>=</Word>
+	  <Word>-</Word>
+	  <Word>/</Word>
+	  <Word>&lt;</Word>
+	  <Word>&gt;</Word>
+	  <Word>&lt;=</Word>
+	  <Word>&gt;=</Word>
+	  <Word>boolean?</Word>
+	  <Word>real?</Word>
+	  <Word>rational?</Word>
+	  <Word>procedure?</Word>
+	  <Word>nan?</Word>
+	  <Word>integer?</Word>
+	  <Word>complex?</Word>
+	  <Word>eq?</Word>
+	  <Word>char?</Word>
+	  <Word>null?</Word>
+	  
+	  <Word>cddddr</Word>
+	  <Word>cdddar</Word>
+	  <Word>cddadr</Word>
+	  <Word>cddaar</Word>
+	  <Word>cdaddr</Word>
+	  <Word>cdadar</Word>
+	  <Word>cdaadr</Word>
+	  <Word>cdaaar</Word>
+	  <Word>cadddr</Word>
+	  <Word>caddar</Word>
+	  <Word>cadadr</Word>
+	  <Word>cadaar</Word>
+	  <Word>caaddr</Word>
+	  <Word>caadar</Word>
+	  <Word>caaadr</Word>
+	  <Word>caaaar</Word>
+	  <Word>cdddr</Word>
+	  <Word>cddar</Word>
+ 	  <Word>cdadr</Word>
+	  <Word>cdaar</Word>
+	  <Word>caddr</Word>
+	  <Word>cadar</Word>
+	  <Word>caadr</Word>
+	  <Word>caaar</Word>
+	  <Word>cddr</Word>
+	  <Word>cdar</Word>
+	  <Word>cadr</Word>
+ 	  <Word>caar</Word>
+	  <Word>cdr</Word>
+	  <Word>car</Word>
+    </Keywords>
+
+    <Keywords color="Auxilliary Syntax">
+      <Word>else</Word>
+    </Keywords>
+
+    <Keywords color="Procedure">
+	  <Word>sin</Word>
+	  <Word>asin</Word>
+	  <Word>cos</Word>
+	  <Word>acos</Word>
+	  <Word>tan</Word>
+	  <Word>atan</Word>	  
+	  <Word>tanh</Word>
+	  <Word>cosh</Word>
+	  <Word>sinh</Word>
+	  <Word>ceiling</Word>
+	  <Word>mod</Word>
+	  <Word>div</Word>
+	  <Word>denominator</Word>
+	  <Word>lcm</Word>
+	  <Word>gcd</Word>
+	  
+	  <Word>zero?</Word>
+	  <Word>sqrt</Word>
+	  <Word>round</Word>
+	  <Word>reverse</Word>
+	  <Word>positive?</Word>
+	  <Word>pair?</Word>
+	  <Word>odd?</Word>
+	  <Word>numerator</Word>
+	  <Word>number?</Word>
+	  <Word>number-&gt;string</Word>
+	  <Word>min</Word>
+	  <Word>max</Word>
+	  <Word>magnitude</Word>
+	  <Word>log</Word>
+	  <Word>list?</Word>
+	  <Word>list-&gt;vector</Word>
+	  <Word>infinite?</Word>
+	  <Word>inexact?</Word>
+	  <Word>exact?</Word>
+	  <Word>negative?</Word>
+	 
+	  <Word>angle</Word>
+	  <Word>member</Word>
+      <Word>exists</Word>
+	  <Word>for-all</Word>
+	  <Word>fold-right</Word>
+	  <Word>fold-left</Word>
+	  <Word>find</Word>
+	  <Word>set-cdr!</Word>
+	  <Word>set-car!</Word>
+	  <Word>remove</Word>
+	  <Word>length</Word>
+	  
+	  <Word>cons*</Word>      
+	  <Word>map</Word>
+	  <Word>filter</Word>
+	  <Word>list</Word>
+	  <Word>append</Word>	  
+      <Word>cons</Word>
+	  <Word>make-list</Word>
+	  <Word>last-pair</Word>
+	  <Word>vector-sort!</Word>
+	  <Word>vector-sort</Word>
+	  <Word>list-sort</Word>
+	  <Word>equal-hash</Word>
+	  <Word>hashtable-equivalence-function</Word>
+	  <Word>make-hashtable</Word>
+	  <Word>hashtable-hash-function</Word>
+	  <Word>make-eqv-hashtable</Word>
+	  <Word>make-eq-hashtable</Word>
+	  <Word>hashtable?</Word>
+	  <Word>hashtable-update!</Word>
+	  <Word>hashtable-size</Word>
+ 	  <Word>hashtable-set!</Word>
+	  <Word>hashtable-ref</Word>
+	  <Word>hashtable-mutable?</Word>
+	  <Word>hashtable-keys</Word>
+	  <Word>hashtable-entries</Word>
+	  <Word>hashtable-delete!</Word>
+	  <Word>hashtable-copy</Word>
+	  <Word>hashtable-contains?</Word>
+	  <Word>hashtable-clear!</Word>
+	  <Word>quotient</Word>
+	  <Word>remainder</Word>
+	  <Word>modulo</Word>
+	  <Word>inexact-&gt;exact</Word>
+	  <Word>force</Word>
+	  <Word>exact-&gt;inexact</Word>
+	  <Word>raise</Word>
+	  <Word>eval</Word>
+	  
+	  <Word>format</Word>
+	  <Word>display</Word>
+	  
+	  <Word>floor</Word>
+	  <Word>abs</Word>	  
+	  <Word>apply</Word>
+	  <Word>delay</Word>
+	  <Word>time</Word>
+	  
+	  <Word>values</Word>
+	  <Word>truncate</Word>
+	  <Word>vector-&gt;list</Word>
+	  <Word>vector-fill!</Word>
+	  <Word>vector-length</Word>
+	  <Word>vector-ref</Word>
+	  <Word>vector-set!</Word>
+	  <Word>write-char</Word>
+	  <Word>write</Word>
+	 
+    </Keywords>
+	
+	<Rule color="Digits"> <!-- floating point + scientific notation -->
+		[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?
+	</Rule>
+	
+	<Rule color="Digits"> 
+		\#[xX][0-9a-fA-F]+
+	</Rule>
+
+  </RuleSet>
+
+</SyntaxDefinition>

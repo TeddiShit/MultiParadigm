@@ -1,0 +1,135 @@
+﻿<Window x:Class="MultiParadigmGrapher.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:oxy="http://oxyplot.codeplex.com"
+        xmlns:avalonEdit="http://icsharpcode.net/sharpdevelop/avalonedit"
+        DataContext="{Binding Main, Source={StaticResource Locator}}"
+        Title="SchemeGrapher" Height="700" Width="1000">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        
+        <Grid Grid.Column="0">
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+
+            <GroupBox Header="Functions" Margin="5" >
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition Height="auto"/>
+                    </Grid.RowDefinitions>
+
+                    <ListBox BorderBrush="Transparent" Grid.ColumnSpan="2" SelectedItem="{Binding SelectedFunction, Mode=OneWayToSource}" ItemsSource="{Binding Functions}" HorizontalContentAlignment="Stretch">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <DockPanel LastChildFill="True" Background="{Binding Color}">
+                                    <CheckBox DockPanel.Dock="Left" Margin="5" IsChecked="{Binding IsEnabled}"/>
+                                    <TextBlock Margin="5" Foreground="Black" Text="{Binding Name}"/>
+                                </DockPanel>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                    
+                    <Button Content="+" Grid.Column="0" Grid.Row="1" Margin="5" />
+                    <Button Content="-" Grid.Column="1" Grid.Row="1" Margin="5" />
+                    
+                </Grid>
+                
+            </GroupBox>            
+            
+            <GroupBox Grid.Row="1" Margin="5" Header="Function settings">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+
+                    <CheckBox Margin="5" Grid.Row="0" Grid.Column="0" Content="Show derivative" IsChecked="{Binding SelectedFunction.ShowDerivative}"/>
+                    <CheckBox Margin="5" Grid.Row="0" Grid.Column="1" Content="Show integral" IsChecked="{Binding SelectedFunction.ShowIntegral}"/>
+
+                    <GroupBox Margin="5" Header="Step" Grid.Row="1" >
+                        <TextBox Margin="5" Text="{Binding SelectedFunction.Step}"/>
+                    </GroupBox>                  
+
+                </Grid>
+            </GroupBox>
+
+            <GroupBox Grid.Row="2" Margin="5" Header="Function">
+                <avalonEdit:TextEditor                    
+                    FontFamily="Consolas"
+                    Margin="5"
+                    Document="{Binding CodeDocument}"
+                    SyntaxHighlighting="{Binding SyntaxHighlighting}"
+                    FontSize="10pt" ShowLineNumbers="True" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto"/>
+            </GroupBox>
+            
+
+            <Button Grid.Row="3" Margin="5" Content="Apply" Command="{Binding ApplyFunctionCommand}" />
+
+            <GroupBox Grid.Row="4" Margin="5" Header="Output">
+                
+            </GroupBox>
+        </Grid>
+
+        <DockPanel Margin="5" LastChildFill="True" Grid.Column="1">
+            <Grid DockPanel.Dock="Top">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                
+                <GroupBox Grid.Column="0"  Header="X">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="auto"/>
+                            <ColumnDefinition/>
+                            <ColumnDefinition Width="auto"/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Margin="5" Grid.Column="0" Text="Min"/>
+                        <TextBox Margin="5" Grid.Column="1" HorizontalAlignment="Stretch" Text="{Binding MinX}"/>
+                        <TextBlock Margin="5" Grid.Column="2" Text="Max"/>
+                        <TextBox Margin="5" Grid.Column="3" HorizontalAlignment="Stretch" Text="{Binding MaxX}"/>
+                    </Grid>                                               
+                </GroupBox>
+
+                <GroupBox Grid.Column="1" Header="Y">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="auto"/>
+                            <ColumnDefinition/>
+                            <ColumnDefinition Width="auto"/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Margin="5" Grid.Column="0" Text="Min"/>
+                        <TextBox Margin="5" Grid.Column="1" HorizontalAlignment="Stretch" Text="{Binding MinY}"/>
+                        <TextBlock Margin="5" Grid.Column="2" Text="Max"/>
+                        <TextBox Margin="5" Grid.Column="3" HorizontalAlignment="Stretch" Text="{Binding MaxY}"/>
+                    </Grid>
+                </GroupBox>
+            </Grid>
+
+            <oxy:Plot DockPanel.Dock="Bottom" Model="{Binding PlotModel}">
+            </oxy:Plot>
+        </DockPanel>
+
+    </Grid>
+</Window>
