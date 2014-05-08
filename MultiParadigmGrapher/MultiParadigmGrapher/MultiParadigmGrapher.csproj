@@ -361,7 +361,6 @@
     <Content Include="SchemeSyntax.xshd">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <None Include="test.ss" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
