@@ -111,9 +111,22 @@ namespace MultiParadigmGrapher.ViewModel
             get { return selectedFunction; }
             set 
             {
-                selectedFunction = value;
-                RaisePropertyChanged();
+                if (selectedFunction != value && value != null)
+                {
+                    SetCodeString(value);
+
+                    selectedFunction = value;
+                    RaisePropertyChanged();
+                }
             }
+        }
+
+        private void SetCodeString(GraphFunction value)
+        {
+            if (selectedFunction != null)
+                selectedFunction.Code = CodeDocument.Text;
+
+            CodeDocument.Text = value.Code;
         }
 
         public ObservableCollection<GraphFunction> Functions { get; set; }
@@ -125,6 +138,10 @@ namespace MultiParadigmGrapher.ViewModel
 
         private void ApplyFunctionExecute()
         {
+            /*
+             * 
+             */
+
             try
             {   
                 var SchemeFunction = CodeDocument.Text.Eval<Callable>();

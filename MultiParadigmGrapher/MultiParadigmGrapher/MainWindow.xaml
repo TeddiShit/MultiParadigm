@@ -31,7 +31,10 @@
                         <RowDefinition Height="auto"/>
                     </Grid.RowDefinitions>
 
-                    <ListBox BorderBrush="Transparent" Grid.ColumnSpan="2" SelectedItem="{Binding SelectedFunction, Mode=OneWayToSource}" ItemsSource="{Binding Functions}" HorizontalContentAlignment="Stretch">
+                    <ListBox BorderBrush="Transparent" 
+                             Grid.ColumnSpan="2" 
+                             SelectedItem="{Binding SelectedFunction, Mode=OneWayToSource}" 
+                             ItemsSource="{Binding Functions}" HorizontalContentAlignment="Stretch">
                         <ListBox.ItemTemplate>
                             <DataTemplate>
                                 <DockPanel LastChildFill="True" Background="{Binding Color}">
