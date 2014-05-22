@@ -238,7 +238,7 @@ namespace MultiParadigmGrapher.ViewModel
 
         private void deleteFunctionExecute(IList obj)
         {
-            throw new NotImplementedException();
+            
         }
 
         private bool ApplyFunctionCanExecute()

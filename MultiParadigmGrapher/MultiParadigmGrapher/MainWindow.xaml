@@ -32,7 +32,7 @@
                     </Grid.RowDefinitions>
 
                     <ListBox Name="functionlsbx" BorderBrush="Transparent" 
-                             Grid.ColumnSpan="2" 
+                             Grid.ColumnSpan="2" SelectionMode="Extended"
                              SelectedItem="{Binding SelectedFunction, Mode=OneWayToSource}" 
                              ItemsSource="{Binding Functions}" HorizontalContentAlignment="Stretch">
                         <ListBox.ItemTemplate>
@@ -46,7 +46,7 @@
                     </ListBox>
 
                     <Button Content="Add function" Command="{Binding AddFunctionCommand}" Grid.Column="0" Grid.Row="1" Margin="5" />
-                    <Button Content="Delete function(s)" Command="{Binding DeleteFunctionCommand}" CommandParameter="{Binding ElementName=functionlsbx}" Grid.Column="1" Grid.Row="1" Margin="5" />
+                    <Button Content="Delete function(s)" Command="{Binding DeleteFunctionCommand}" CommandParameter="{Binding SelectedItems, ElementName=functionlsbx}" Grid.Column="1" Grid.Row="1" Margin="5" />
                     
                 </Grid>
                 
