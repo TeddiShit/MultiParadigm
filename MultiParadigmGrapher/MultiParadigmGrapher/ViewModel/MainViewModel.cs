@@ -62,6 +62,7 @@ namespace MultiParadigmGrapher.ViewModel
 
             LoadSyntaxHighlighting();
             IronSchemeBridge.ResetEnvironment();
+
         }        
 
         //backing
