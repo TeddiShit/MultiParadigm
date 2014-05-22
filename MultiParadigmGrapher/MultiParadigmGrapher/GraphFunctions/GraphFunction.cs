@@ -1,4 +1,5 @@
-﻿using System;
+﻿using OxyPlot.Series;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -176,6 +177,10 @@ namespace MultiParadigmGrapher.GraphFunctions
                 }
             }
         }
+
+        public LineSeries PlotSeries { get; set; }
+        public LineSeries DerivedSeries { get; set; }
+        public AreaSeries IntegralSeries { get; set; }
     
         public event PropertyChangedEventHandler PropertyChanged;
 
