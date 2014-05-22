@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using IronScheme;
 using System.IO;
+using IronScheme.Runtime;
 
 namespace MultiParadigmGrapher.GraphFunctions
 {
@@ -37,6 +38,71 @@ namespace MultiParadigmGrapher.GraphFunctions
             var result = "(samples->step {0} {1} {2})".Eval<dynamic>(min, max, samples);
 
             return (double)result;
+        }
+
+        public static List<Tuple<double, double>> CalcPlotData(string f, double min, double max, int step)
+        {
+            var inputCons = "(calc-plot-data {0} {1} {2} {3})".Eval<Cons>(f.Eval<Callable>(), min, max, step);
+
+            return CreateListOfTuples(inputCons);
+        }
+
+        public static List<Tuple<double, double>> CalcDerivedPlotData(string f, double min, double max, int step)
+        {
+            var inputCons = "(calc-derived-plot-data {0} {1} {2} {3})".Eval<Cons>(f.Eval<Callable>(), min, max, step);
+
+            return CreateListOfTuples(inputCons);
+        }
+
+        public static List<Tuple<double, double>> CalcMidpointIntegralCoords(string f, double min, double max, int n)
+        {
+            var inputCons = "(calc-midpoint-integral-coords {0} {1} {2} {3})".Eval<Cons>(f.Eval<Callable>(), min, max, n);
+
+            return CreateListOfTuples(inputCons);
+        }
+
+        public static List<Tuple<double, double>> CalcLeftIntegralCoords(string f, double min, double max, int n)
+        {
+            var inputCons = "(calc-left-integral-coords {0} {1} {2} {3})".Eval<Cons>(f.Eval<Callable>(), min, max, n);
+
+            return CreateListOfTuples(inputCons);
+        }
+        public static List<Tuple<double, double>> CalcRightIntegralCoords(string f, double min, double max, int n)
+        {
+            var inputCons = "(calc-right-integral-coords {0} {1} {2} {3})".Eval<Cons>(f.Eval<Callable>(), min, max, n);
+
+            return CreateListOfTuples(inputCons);
+        }
+
+        public static double CalcDefiniteIntegral(double min, double max, int n, List<Tuple<double, double>> coords)
+        {
+            var ConsDataList = new List<Cons>();
+            foreach (var obj in coords)
+            {
+                ConsDataList.Add(new Cons(obj.Item1, obj.Item2));
+            }
+            var ConsDataCons = Cons.FromList(ConsDataList);
+
+
+            var result = "(calc-definite-integral {0} {1} {2} {3})".Eval<double>(min, max, n, ConsDataCons);
+
+            return result;
+        }
+
+        private static List<Tuple<double, double>> CreateListOfTuples(Cons inputCons)
+        {
+            List<Tuple<double, double>> PlotDataList = new List<Tuple<double, double>>();
+
+            foreach (var obj in inputCons)
+            {
+                var plot = (Cons)obj;
+
+                var x = (dynamic)plot.car;
+                var y = (dynamic)plot.cdr;
+
+                PlotDataList.Add(new Tuple<double, double>((double)x, (double)y));
+            }
+            return PlotDataList;
         }
     }
 }
