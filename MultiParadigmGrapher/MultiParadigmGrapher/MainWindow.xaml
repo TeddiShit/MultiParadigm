@@ -52,7 +52,7 @@
                 
             </GroupBox>            
             
-            <GroupBox Grid.Row="1" Margin="5" Header="Function settings">
+            <Expander Grid.Row="1" Margin="5" Header="Function settings">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition/>
@@ -64,14 +64,44 @@
                     </Grid.RowDefinitions>
 
                     <CheckBox Margin="5" Grid.Row="0" Grid.Column="0" Content="Show derivative" IsChecked="{Binding SelectedFunction.ShowDerivative}"/>
-                    <CheckBox Margin="5" Grid.Row="0" Grid.Column="1" Content="Show integral" IsChecked="{Binding SelectedFunction.ShowIntegral}"/>
 
-                    <GroupBox Margin="5" Header="Step" Grid.Row="1" >
-                        <TextBox Margin="5" Text="{Binding SelectedFunction.Step}"/>
+                    <GroupBox Margin="5" Grid.Row="0" Grid.RowSpan="2" Grid.Column="1">
+                        <GroupBox.Header>
+                            <CheckBox Content="Show integral" IsChecked="{Binding SelectedFunction.ShowIntegral}"/>
+                        </GroupBox.Header>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                            </Grid.RowDefinitions>
+
+                            <Label Grid.Column="0" Grid.Row="0" IsEnabled="{Binding SelectedFunction.ShowIntegral}" Content="Minimum"/>
+                            <TextBox Grid.Column="1" Grid.Row="0" IsEnabled="{Binding SelectedFunction.ShowIntegral}" Margin="5" Text="{Binding SelectedFunction.IntegralMin}"/>
+                            <Label Grid.Column="0" Grid.Row="1" IsEnabled="{Binding SelectedFunction.ShowIntegral}" Content="Maximum"/>
+                            <TextBox Grid.Column="1" Grid.Row="1" IsEnabled="{Binding SelectedFunction.ShowIntegral}" Margin="5" Text="{Binding SelectedFunction.IntegralMax}"/>
+                            <Label Grid.Column="0" Grid.Row="2" IsEnabled="{Binding SelectedFunction.ShowIntegral}" Content="Resolution"/>
+                            <TextBox Grid.Column="1" Grid.Row="2" IsEnabled="{Binding SelectedFunction.ShowIntegral}" Margin="5" Text="{Binding SelectedFunction.IntegralRes}"/>
+                        </Grid>
+                    </GroupBox>
+                    
+                    
+
+                    <GroupBox Margin="5" Header="Resolution" Grid.Row="1" >
+                        <DockPanel>
+                            <Label Content="St_ep"/>
+                            <TextBox MinWidth="40" Margin="5" Text="{Binding SelectedFunction.Step}"/>
+                            <Label Content="S_amples"/>
+                            <TextBox Margin="5" Text="{Binding SelectedFunction.Samples}"/>
+                        </DockPanel>                        
                     </GroupBox>                  
 
                 </Grid>
-            </GroupBox>
+            </Expander>
 
             <GroupBox Grid.Row="2" Margin="5" Header="Function">
                 <avalonEdit:TextEditor                    
@@ -130,8 +160,8 @@
                 </GroupBox>
             </Grid>
 
-            <oxy:Plot DockPanel.Dock="Bottom" Model="{Binding PlotModel}">
-            </oxy:Plot>
+            <!--<oxy:Plot DockPanel.Dock="Bottom" Model="{Binding PlotModel}"/>-->
+            <TextBlock DockPanel.Dock="Bottom" Text="DET ER LORT" />
         </DockPanel>
 
     </Grid>

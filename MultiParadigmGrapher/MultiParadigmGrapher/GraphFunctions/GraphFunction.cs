@@ -30,19 +30,73 @@ namespace MultiParadigmGrapher.GraphFunctions
 
         //backing
         private double step;
-        //private int samples;
+        private int samples;
+      
+        private bool isEnabled;
+        private bool showDerivative;
+        private bool showIntegral;
+
+        private Brush color;
 
         public double Step { get; set; }
-        //public int Samples { get; set; }
+        public int Samples { get; set; }
+
+        private double IntegralMin { get; set; }
+        private double IntegralMax { get; set; }
+        private int IntegralRes { get; set; }
 
         public string Code { get; set; }
         public string Name { get; set; }
 
-        public Brush Color { get; set; }
+        public Brush Color 
+        { 
+            get { return color; } 
+            set 
+            {
+                if (value != color)
+                {
+                    color = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
 
-        public bool ShowDerivative { get; set; }
-        public bool ShowIntegral { get; set; }
-        public bool IsEnabled { get; set; }
+        public bool ShowDerivative 
+        {
+            get { return showDerivative; }
+            set 
+            {
+                if (value != showDerivative)
+                {
+                    showDerivative = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+        public bool ShowIntegral
+        {
+            get { return showIntegral; }
+            set
+            {
+                if (value != showIntegral)
+                {
+                    showIntegral = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+        public bool IsEnabled
+        {
+            get { return isEnabled; }
+            set
+            {
+                if (value != isEnabled)
+                {
+                    isEnabled = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
     
         public event PropertyChangedEventHandler PropertyChanged;
 

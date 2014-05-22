@@ -11,17 +11,32 @@ namespace MultiParadigmGrapher.IronSchemeBridging
 {
     public static class IronSchemeBridge
     {
-        public static Func<TextWriter, object> SetStdOut { get; private set; }
-        public static Func<TextWriter, object> SetErrOut { get; private set; }
-        public static Func<TextReader, object> SetStdIn { get; private set; }
+        private static Func<TextWriter, object> SetStdOut { get; set; }
+        private static Func<TextWriter, object> SetErrOut { get; set; }
+        private static Func<TextReader, object> SetStdIn { get; set; }
 
         private static Func<object> resetEnvironment;
+
+        public static event EventHandler<EventTextWriter.StringEventArgs> StdOutOutput;
+        public static event EventHandler<EventTextWriter.StringEventArgs> StdErrOutput;
+
+        private static EventTextWriter stdOutWriter;
+        private static EventTextWriter stdErrWriter;
 
         static IronSchemeBridge()
         {
             extractSchemeProcedures();
             ResetEnvironment();
-        }
+
+            stdOutWriter = new EventTextWriter();
+            stdErrWriter = new EventTextWriter();
+
+            stdOutWriter.StringWritten += (o, a) => onStdOutOutput(o, a);
+            stdErrWriter.StringWritten += (o, a) => onStdErrOutput(o, a);
+
+            SetStdOut(stdOutWriter);
+            SetErrOut(stdErrWriter);
+        }        
 
         private static void extractSchemeProcedures()
         {
@@ -76,14 +91,25 @@ namespace MultiParadigmGrapher.IronSchemeBridging
 
         private static void defineDefaultProcedures()
         {
-            @"
-              (define range
-                (lambda (n m step)
-                    (cond
-                        ((>= (+ n step) m) (list n))
-                        (else (cons n 
-                                    (range ((if (< n m) + -) n step) m step))))))
-            ".Eval();
+ 
+        }
+
+        private static void onStdOutOutput(object sender, EventTextWriter.StringEventArgs args)
+        {
+            var handler = StdOutOutput;
+            if (handler != null)
+            {
+                handler(sender, args);
+            }
+        }
+
+        private static void onStdErrOutput(object sender, EventTextWriter.StringEventArgs args)
+        {
+            var handler = StdErrOutput;
+            if (handler != null)
+            {
+                handler(sender, args);
+            }
         }
     }
 }
