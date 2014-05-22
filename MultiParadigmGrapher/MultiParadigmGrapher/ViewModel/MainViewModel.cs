@@ -47,10 +47,11 @@ namespace MultiParadigmGrapher.ViewModel
         public MainViewModel()
         {
             Functions = new ObservableCollection<GraphFunction>();
-            Functions.Add(new GraphFunction());
+
+            AddFunction();
 
             ApplyFunctionCommand = new RelayCommand(ApplyFunctionExecute, ApplyFunctionCanExecute);
-            AddFunctionCommand = new RelayCommand(() => Functions.Add(new GraphFunction()), () => Functions.Count < 30);
+            AddFunctionCommand = new RelayCommand(AddFunction, () => Functions.Count < 30);
             DeleteFunctionCommand = new RelayCommand<IList>(deleteFunctionExecute, deleteFunctionCanExecute);
 
             InitPlotModel();
@@ -239,9 +240,39 @@ namespace MultiParadigmGrapher.ViewModel
 
         private void deleteFunctionExecute(IList functions)
         {
-            foreach (var func in functions)
+            var toBeDeleted = new List<GraphFunction>(functions.Cast<GraphFunction>());
+
+            foreach (var func in toBeDeleted)
             {
-                
+                var function = func as GraphFunction;
+                if (function != null)
+                {
+                    RemoveFunction(function);
+                }
+            }
+        }
+
+        private bool suppressStepPropertyChanges = false;
+        private bool suppressSamplePropertyChanges = false;
+
+        private void function_propertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            var graphFunc = sender as GraphFunction;
+
+            if (graphFunc != null)
+            {
+                if (!suppressStepPropertyChanges && e.PropertyName == "Step")
+                {
+                    suppressSamplePropertyChanges = true;
+                    graphFunc.Samples = SchemeMathWrapper.StepToSamples(XMin, XMax, graphFunc.Step);
+                    suppressSamplePropertyChanges = false;                    
+                }
+                else if (!suppressSamplePropertyChanges && e.PropertyName == "Samples")
+                {
+                    suppressStepPropertyChanges = true;
+                    graphFunc.Step = SchemeMathWrapper.SamplesToStep(XMin, XMax, graphFunc.Samples);
+                    suppressStepPropertyChanges = false;
+                }
             }
         }
 
@@ -305,6 +336,18 @@ namespace MultiParadigmGrapher.ViewModel
                 selectedFunction.Code = CodeDocument.Text;
 
             CodeDocument.Text = value.Code;
+        }
+
+        private void RemoveFunction(GraphFunction function)
+        {
+            Functions.Remove(function);            
+        }
+
+        private void AddFunction()
+        {
+            var func = new GraphFunction();
+            func.PropertyChanged += function_propertyChanged;
+            Functions.Add(func);
         }
     }
 }

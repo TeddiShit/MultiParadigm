@@ -32,7 +32,7 @@
                     </Grid.RowDefinitions>
 
                     <ListBox Name="functionlsbx" BorderBrush="Transparent" 
-                             Grid.ColumnSpan="2" SelectionMode="Extended"
+                             Grid.ColumnSpan="2" SelectionMode="Extended" SelectedIndex="0"
                              SelectedItem="{Binding SelectedFunction, Mode=OneWayToSource}" 
                              ItemsSource="{Binding Functions}" HorizontalContentAlignment="Stretch">
                         <ListBox.ItemTemplate>
@@ -74,9 +74,9 @@
                                 </Grid.RowDefinitions>
 
                                 <Label Grid.Column="0" Grid.Row="0" Content="St_ep"/>
-                                <TextBox Grid.Column="1" Grid.Row="0" MinWidth="40" Margin="5" Text="{Binding SelectedFunction.Step}"/>
+                                <TextBox Grid.Column="1" Grid.Row="0" MinWidth="40" Margin="5" Text="{Binding SelectedFunction.Step, ValidatesOnExceptions=True}"/>
                                 <Label Grid.Column="0" Grid.Row="1" Content="S_amples"/>
-                                <TextBox Grid.Column="1" Grid.Row="1" Margin="5" Text="{Binding SelectedFunction.Samples}"/>
+                                <TextBox Grid.Column="1" Grid.Row="1" Margin="5" Text="{Binding SelectedFunction.Samples, ValidatesOnExceptions=True}"/>
                             </Grid>
                         </GroupBox>
 
@@ -100,11 +100,11 @@
                             </Grid.RowDefinitions>
 
                             <Label Grid.Column="0" Grid.Row="0" IsEnabled="{Binding SelectedFunction.ShowIntegral}" Content="Minimum"/>
-                            <TextBox Grid.Column="1" Grid.Row="0" IsEnabled="{Binding SelectedFunction.ShowIntegral}" Margin="5" Text="{Binding SelectedFunction.IntegralMin}"/>
+                            <TextBox Grid.Column="1" Grid.Row="0" IsEnabled="{Binding SelectedFunction.ShowIntegral}" Margin="5" Text="{Binding SelectedFunction.IntegralMin, ValidatesOnExceptions=True}"/>
                             <Label Grid.Column="0" Grid.Row="1" IsEnabled="{Binding SelectedFunction.ShowIntegral}" Content="Maximum"/>
-                            <TextBox Grid.Column="1" Grid.Row="1" IsEnabled="{Binding SelectedFunction.ShowIntegral}" Margin="5" Text="{Binding SelectedFunction.IntegralMax}"/>
+                            <TextBox Grid.Column="1" Grid.Row="1" IsEnabled="{Binding SelectedFunction.ShowIntegral}" Margin="5" Text="{Binding SelectedFunction.IntegralMax, ValidatesOnExceptions=True}"/>
                             <Label Grid.Column="0" Grid.Row="2" IsEnabled="{Binding SelectedFunction.ShowIntegral}" Content="Resolution"/>
-                            <TextBox Grid.Column="1" Grid.Row="2" IsEnabled="{Binding SelectedFunction.ShowIntegral}" Margin="5" Text="{Binding SelectedFunction.IntegralRes}"/>
+                            <TextBox Grid.Column="1" Grid.Row="2" IsEnabled="{Binding SelectedFunction.ShowIntegral}" Margin="5" Text="{Binding SelectedFunction.IntegralRes, ValidatesOnExceptions=True}"/>
                         </Grid>
                     </GroupBox>                                      
 

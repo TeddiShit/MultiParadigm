@@ -27,12 +27,12 @@ namespace MultiParadigmGrapher.GraphFunctions
             int result = "(+ 1 2)".Eval<int>();
         }
 
-        public static int StepToSamples(int min, int max, int step)
+        public static int StepToSamples(double min, double max, double step)
         {
             return "(step->samples {0} {1} {2})".Eval<int>(min, max, step);
         }
 
-        public static double SamplesToStep(int min, int max, int samples)
+        public static double SamplesToStep(double min, double max, int samples)
         {
             var result = "(samples->step {0} {1} {2})".Eval<dynamic>(min, max, samples);
 
