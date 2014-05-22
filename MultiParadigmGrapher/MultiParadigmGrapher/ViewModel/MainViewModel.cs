@@ -236,9 +236,12 @@ namespace MultiParadigmGrapher.ViewModel
             return false;
         }
 
-        private void deleteFunctionExecute(IList obj)
+        private void deleteFunctionExecute(IList functions)
         {
-            
+            foreach (var func in functions)
+            {
+                
+            }
         }
 
         private bool ApplyFunctionCanExecute()

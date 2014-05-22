@@ -36,6 +36,9 @@ namespace MultiParadigmGrapher.GraphFunctions
         //backing
         private double step;
         private int samples;
+        private double integralMax;
+        private double integralMin;
+        private int integralRes;
       
         private bool isEnabled;
         private bool showDerivative;
@@ -43,12 +46,83 @@ namespace MultiParadigmGrapher.GraphFunctions
 
         private Brush color;
 
-        public double Step { get; set; }
-        public int Samples { get; set; }
+        public double Step 
+        {
+            get { return step; }
+            set 
+            {
+                if (value > 0)
+                {
+                    step = value;
+                    OnPropertyChanged();
+                }
+                else
+                    throw new ArgumentOutOfRangeException("Step must be positive.");
+            }
+        }
+        public int Samples
+        {
+            get { return samples; }
+            set
+            {
+                if (value > 0)
+                {
+                    samples = value;
+                    OnPropertyChanged();
+                }
+                else
+                    throw new ArgumentOutOfRangeException("Samples must be positive.");
+            }
+        }
 
-        public double IntegralMin { get; set; }
-        public double IntegralMax { get; set; }
-        public int IntegralRes { get; set; }
+        public double IntegralMin
+        {
+            get { return integralMin; }
+            set
+            {
+                if (value < IntegralMax)
+                {
+                    integralMin = value;
+                    OnPropertyChanged();
+                }
+                else
+                {
+                    throw new ArgumentOutOfRangeException("Integral minimum must be less than integral maximum.");
+                }
+            }
+        }
+        public double IntegralMax
+        {
+            get { return integralMax; }
+            set
+            {
+                if (value > IntegralMin)
+                {
+                    integralMax = value;
+                    OnPropertyChanged();
+                }
+                else
+                {
+                    throw new ArgumentOutOfRangeException("Integral maximum must be greater than integral minimum.");
+                }
+            }
+        }
+        public int IntegralRes 
+        {
+            get { return integralRes; }
+            set 
+            {
+                if (value > 0)
+                {
+                    integralRes = value;
+                    OnPropertyChanged();
+                }
+                else
+                {
+                    throw new ArgumentOutOfRangeException("Integral resolution must be positive.");
+                }
+            }
+        }
 
         public string Code { get; set; }
         public string Name { get; set; }
