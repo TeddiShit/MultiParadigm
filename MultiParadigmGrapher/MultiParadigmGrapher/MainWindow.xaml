@@ -31,7 +31,7 @@
                         <RowDefinition Height="auto"/>
                     </Grid.RowDefinitions>
 
-                    <ListBox BorderBrush="Transparent" 
+                    <ListBox Name="functionlsbx" BorderBrush="Transparent" 
                              Grid.ColumnSpan="2" 
                              SelectedItem="{Binding SelectedFunction, Mode=OneWayToSource}" 
                              ItemsSource="{Binding Functions}" HorizontalContentAlignment="Stretch">
@@ -44,9 +44,9 @@
                             </DataTemplate>
                         </ListBox.ItemTemplate>
                     </ListBox>
-                    
-                    <Button Content="+" Grid.Column="0" Grid.Row="1" Margin="5" />
-                    <Button Content="-" Grid.Column="1" Grid.Row="1" Margin="5" />
+
+                    <Button Content="Add function" Command="{Binding AddFunctionCommand}" Grid.Column="0" Grid.Row="1" Margin="5" />
+                    <Button Content="Delete function(s)" Command="{Binding DeleteFunctionCommand}" CommandParameter="{Binding ElementName=functionlsbx}" Grid.Column="1" Grid.Row="1" Margin="5" />
                     
                 </Grid>
                 
@@ -58,12 +58,31 @@
                         <ColumnDefinition/>
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition/>
-                        <RowDefinition/>
-                    </Grid.RowDefinitions>
 
-                    <CheckBox Margin="5" Grid.Row="0" Grid.Column="0" Content="Show derivative" IsChecked="{Binding SelectedFunction.ShowDerivative}"/>
+                    <DockPanel Grid.Row="0" Grid.Column="0" LastChildFill="True">
+                        <CheckBox Margin="5" DockPanel.Dock="Top"  Content="Show derivative" IsChecked="{Binding SelectedFunction.ShowDerivative}"/>
+
+                        <GroupBox Margin="5" Header="Resolution">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition/>
+                                    <ColumnDefinition/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                </Grid.RowDefinitions>
+
+                                <Label Grid.Column="0" Grid.Row="0" Content="St_ep"/>
+                                <TextBox Grid.Column="1" Grid.Row="0" MinWidth="40" Margin="5" Text="{Binding SelectedFunction.Step}"/>
+                                <Label Grid.Column="0" Grid.Row="1" Content="S_amples"/>
+                                <TextBox Grid.Column="1" Grid.Row="1" Margin="5" Text="{Binding SelectedFunction.Samples}"/>
+                            </Grid>
+                        </GroupBox>
+
+                    </DockPanel>
+
+                    
 
                     <GroupBox Margin="5" Grid.Row="0" Grid.RowSpan="2" Grid.Column="1">
                         <GroupBox.Header>
@@ -87,18 +106,7 @@
                             <Label Grid.Column="0" Grid.Row="2" IsEnabled="{Binding SelectedFunction.ShowIntegral}" Content="Resolution"/>
                             <TextBox Grid.Column="1" Grid.Row="2" IsEnabled="{Binding SelectedFunction.ShowIntegral}" Margin="5" Text="{Binding SelectedFunction.IntegralRes}"/>
                         </Grid>
-                    </GroupBox>
-                    
-                    
-
-                    <GroupBox Margin="5" Header="Resolution" Grid.Row="1" >
-                        <DockPanel>
-                            <Label Content="St_ep"/>
-                            <TextBox MinWidth="40" Margin="5" Text="{Binding SelectedFunction.Step}"/>
-                            <Label Content="S_amples"/>
-                            <TextBox Margin="5" Text="{Binding SelectedFunction.Samples}"/>
-                        </DockPanel>                        
-                    </GroupBox>                  
+                    </GroupBox>                                      
 
                 </Grid>
             </Expander>
@@ -129,6 +137,10 @@
                 
                 <GroupBox Grid.Column="0"  Header="X">
                     <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="auto"/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="auto"/>
                             <ColumnDefinition/>
@@ -137,14 +149,32 @@
                         </Grid.ColumnDefinitions>
 
                         <TextBlock Margin="5" Grid.Column="0" Text="Min"/>
-                        <TextBox Margin="5" Grid.Column="1" HorizontalAlignment="Stretch" Text="{Binding MinX}"/>
+                        <TextBox Margin="5" Grid.Column="1" HorizontalAlignment="Stretch" Text="{Binding XMin, ValidatesOnExceptions=True}"/>
                         <TextBlock Margin="5" Grid.Column="2" Text="Max"/>
-                        <TextBox Margin="5" Grid.Column="3" HorizontalAlignment="Stretch" Text="{Binding MaxX}"/>
+                        <TextBox Margin="5" Grid.Column="3" HorizontalAlignment="Stretch" Text="{Binding XMax, ValidatesOnExceptions=True}"/>
+                        
+                        <GroupBox Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="1">
+                            <GroupBox.Header>
+                                <RadioButton IsChecked="{Binding IsXLogarithmic, Mode=TwoWay}" GroupName="xaxis" Content="Logarithmic"/>
+                            </GroupBox.Header>
+                            
+                            <ComboBox Margin="3" IsEnabled="{Binding IsXLogarithmic}" IsEditable="False" SelectedIndex="0" 
+                                      ItemsSource="{Binding LogarithmicBases}" SelectedItem="{Binding XLogarithmicBase, Mode=TwoWay}" />
+                        </GroupBox>
+
+                        <RadioButton Grid.Column="2" IsChecked="{Binding IsXLinear, Mode=TwoWay}" 
+                                     HorizontalAlignment="Center" VerticalAlignment="Center" 
+                                     Grid.ColumnSpan="2" Grid.Row="1" 
+                                     GroupName="xaxis" Content="Linear"/>
                     </Grid>                                               
                 </GroupBox>
 
                 <GroupBox Grid.Column="1" Header="Y">
                     <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="auto"/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="auto"/>
                             <ColumnDefinition/>
@@ -153,9 +183,24 @@
                         </Grid.ColumnDefinitions>
 
                         <TextBlock Margin="5" Grid.Column="0" Text="Min"/>
-                        <TextBox Margin="5" Grid.Column="1" HorizontalAlignment="Stretch" Text="{Binding MinY}"/>
+                        <TextBox Margin="5" Grid.Column="1" HorizontalAlignment="Stretch" Text="{Binding YMin, ValidatesOnExceptions=True}"/>
                         <TextBlock Margin="5" Grid.Column="2" Text="Max"/>
-                        <TextBox Margin="5" Grid.Column="3" HorizontalAlignment="Stretch" Text="{Binding MaxY}"/>
+                        <TextBox Margin="5" Grid.Column="3" HorizontalAlignment="Stretch" Text="{Binding YMax, ValidatesOnExceptions=True}"/>
+
+                        <GroupBox Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="1">
+                            <GroupBox.Header>
+                                <RadioButton IsChecked="{Binding IsYLogarithmic, Mode=TwoWay}" GroupName="yaxis" Content="Logarithmic"/>
+                            </GroupBox.Header>
+
+                            <ComboBox Margin="3" IsEnabled="{Binding IsYLogarithmic}" IsEditable="False" SelectedIndex="0" 
+                                      ItemsSource="{Binding LogarithmicBases}" SelectedItem="{Binding YLogarithmicBase, Mode=TwoWay}" />
+                        </GroupBox>
+
+                        <RadioButton Grid.Column="2" IsChecked="{Binding IsYLinear, Mode=TwoWay}" 
+                                     HorizontalAlignment="Center" VerticalAlignment="Center" 
+                                     Grid.ColumnSpan="2" Grid.Row="1" 
+                                     GroupName="yaxis" Content="Linear"/>
+
                     </Grid>
                 </GroupBox>
             </Grid>

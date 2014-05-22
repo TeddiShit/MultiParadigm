@@ -19,7 +19,12 @@ namespace MultiParadigmGrapher.GraphFunctions
             Name = "Function " + FunctionCounter;
 
             Step = 0.2;
+            Samples = 50;
             Code = "(lambda (x) x)"; //solid start!
+
+            IntegralMax = 20;
+            IntegralMin = -20;
+            IntegralRes = 10;
 
             ShowDerivative = false;
             ShowIntegral = false;
@@ -41,9 +46,9 @@ namespace MultiParadigmGrapher.GraphFunctions
         public double Step { get; set; }
         public int Samples { get; set; }
 
-        private double IntegralMin { get; set; }
-        private double IntegralMax { get; set; }
-        private int IntegralRes { get; set; }
+        public double IntegralMin { get; set; }
+        public double IntegralMax { get; set; }
+        public int IntegralRes { get; set; }
 
         public string Code { get; set; }
         public string Name { get; set; }

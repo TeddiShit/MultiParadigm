@@ -84,6 +84,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="GraphFunctions\GraphFunction.cs" />
+    <Compile Include="GraphFunctions\SchemeMathWrapper.cs" />
     <Compile Include="IronSchemeBridging\EventTextWriter.cs" />
     <Compile Include="IronSchemeBridging\IronSchemeBridge.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
