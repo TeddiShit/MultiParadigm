@@ -31,7 +31,7 @@ namespace MultiParadigmGrapher.GraphFunctions
             ShowIntegral = false;
             IsEnabled = true;
 
-            Color = Brushes.White;
+            Color = Brushes.Gray;
         }
 
         //backing
@@ -46,6 +46,7 @@ namespace MultiParadigmGrapher.GraphFunctions
         private bool showIntegral;
 
         private Brush color;
+        private string name;
 
         public double Step 
         {
@@ -126,7 +127,18 @@ namespace MultiParadigmGrapher.GraphFunctions
         }
 
         public string Code { get; set; }
-        public string Name { get; set; }
+        public string Name
+        {
+            get { return name; }
+            set 
+            {
+                if (!string.IsNullOrWhiteSpace(value))
+                {
+                    name = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
 
         public Brush Color 
         { 

@@ -3,6 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:oxy="http://oxyplot.codeplex.com"
         xmlns:avalonEdit="http://icsharpcode.net/sharpdevelop/avalonedit"
+        Icon="/logo.png"
         DataContext="{Binding Main, Source={StaticResource Locator}}"
         Title="SchemeGrapher" Height="700" Width="1000">
     <Grid>
@@ -33,11 +34,12 @@
 
                     <ListBox Name="functionlsbx" BorderBrush="Transparent" 
                              Grid.ColumnSpan="2" SelectionMode="Extended" SelectedIndex="0"
-                             SelectedItem="{Binding SelectedFunction, Mode=OneWayToSource}" 
+                             SelectedItem="{Binding SelectedFunction, Mode=TwoWay}" 
                              ItemsSource="{Binding Functions}" HorizontalContentAlignment="Stretch">
                         <ListBox.ItemTemplate>
                             <DataTemplate>
-                                <DockPanel LastChildFill="True" Background="{Binding Color}">
+                                <DockPanel LastChildFill="True">
+                                    <Rectangle DockPanel.Dock="Left" VerticalAlignment="Stretch" Margin="5" Width="18" Fill="{Binding Color}"/>
                                     <CheckBox DockPanel.Dock="Left" Margin="5" IsChecked="{Binding IsEnabled}"/>
                                     <TextBlock Margin="5" Foreground="Black" Text="{Binding Name}"/>
                                 </DockPanel>
@@ -50,9 +52,9 @@
                     
                 </Grid>
                 
-            </GroupBox>            
-            
-            <Expander Grid.Row="1" Margin="5" Header="Function settings">
+            </GroupBox>
+
+            <Expander Grid.Row="1" Margin="5" Header="Function settings" IsEnabled="{Binding SelectedFunction, Converter={StaticResource NullToBoolean}}">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition/>
@@ -60,6 +62,16 @@
                     </Grid.ColumnDefinitions>
 
                     <DockPanel Grid.Row="0" Grid.Column="0" LastChildFill="True">
+                        <Grid DockPanel.Dock="Top">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            
+                            <TextBlock Grid.Column="0" Margin="5" Text="Name"/>
+                            <TextBox Grid.Column="1" Margin="5" Text="{Binding SelectedFunction.Name}"/>
+                        </Grid>
+                        
                         <CheckBox Margin="5" DockPanel.Dock="Top"  Content="Show derivative" IsChecked="{Binding SelectedFunction.ShowDerivative}"/>
 
                         <GroupBox Margin="5" Header="Resolution">
@@ -80,9 +92,7 @@
                             </Grid>
                         </GroupBox>
 
-                    </DockPanel>
-
-                    
+                    </DockPanel>                    
 
                     <GroupBox Margin="5" Grid.Row="0" Grid.RowSpan="2" Grid.Column="1">
                         <GroupBox.Header>
@@ -111,7 +121,7 @@
                 </Grid>
             </Expander>
 
-            <GroupBox Grid.Row="2" Margin="5" Header="Function">
+            <GroupBox Grid.Row="2" Margin="5" Header="Function" IsEnabled="{Binding SelectedFunction, Converter={StaticResource NullToBoolean}}">
                 <avalonEdit:TextEditor                    
                     FontFamily="Consolas"
                     Margin="5"
@@ -119,11 +129,10 @@
                     SyntaxHighlighting="{Binding SyntaxHighlighting}"
                     FontSize="10pt" ShowLineNumbers="True" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto"/>
             </GroupBox>
-            
 
-            <Button Grid.Row="3" Margin="5" Content="Apply" Command="{Binding ApplyFunctionCommand}" />
+            <Button Grid.Row="3" Margin="5" Content="Apply" Command="{Binding ApplyFunctionCommand}" IsEnabled="{Binding SelectedFunction, Converter={StaticResource NullToBoolean}}" />
 
-            <GroupBox Grid.Row="4" Margin="5" Header="Output">
+            <GroupBox Grid.Row="4" Margin="5" Header="Output" IsEnabled="{Binding SelectedFunction, Converter={StaticResource NullToBoolean}}">
                 
             </GroupBox>
         </Grid>

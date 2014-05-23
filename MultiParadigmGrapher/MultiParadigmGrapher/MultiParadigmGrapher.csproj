@@ -89,6 +89,7 @@
     <Compile Include="IronSchemeBridging\IronSchemeBridge.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
+    <Compile Include="View\Converters\NullToBooleanConverter.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -363,6 +364,7 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <AppDesigner Include="Properties\" />
+    <Resource Include="logo.png" />
     <Content Include="SchemeSyntax.xshd">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

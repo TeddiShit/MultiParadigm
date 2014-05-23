@@ -40,59 +40,62 @@ namespace MultiParadigmGrapher.GraphFunctions
             return (double)result;
         }
 
-        public static List<Tuple<double, double>> CalcPlotData(string f, double min, double max, int step)
+        public static IEnumerable<Tuple<double, double>> CalcPlotData(string f, double min, double max, double step)
         {
             var inputCons = "(calc-plot-data {0} {1} {2} {3})".Eval<Cons>(f.Eval<Callable>(), min, max, step);
 
             return CreateListOfTuples(inputCons);
         }
 
-        public static List<Tuple<double, double>> CalcDerivedPlotData(string f, double min, double max, int step)
+        public static IEnumerable<Tuple<double, double>> CalcDerivedPlotData(string f, double min, double max, double step)
         {
             var inputCons = "(calc-derived-plot-data {0} {1} {2} {3})".Eval<Cons>(f.Eval<Callable>(), min, max, step);
 
             return CreateListOfTuples(inputCons);
         }
 
-        public static List<Tuple<double, double>> CalcMidpointIntegralCoords(string f, double min, double max, int n)
+        public static IEnumerable<Tuple<double, double>> CalcMidpointIntegralCoords(string f, double min, double max, int n)
         {
             var inputCons = "(calc-midpoint-integral-coords {0} {1} {2} {3})".Eval<Cons>(f.Eval<Callable>(), min, max, n);
 
             return CreateListOfTuples(inputCons);
         }
 
-        public static List<Tuple<double, double>> CalcLeftIntegralCoords(string f, double min, double max, int n)
+        public static IEnumerable<Tuple<double, double>> CalcLeftIntegralCoords(string f, double min, double max, int n)
         {
             var inputCons = "(calc-left-integral-coords {0} {1} {2} {3})".Eval<Cons>(f.Eval<Callable>(), min, max, n);
 
             return CreateListOfTuples(inputCons);
         }
-        public static List<Tuple<double, double>> CalcRightIntegralCoords(string f, double min, double max, int n)
+        public static IEnumerable<Tuple<double, double>> CalcRightIntegralCoords(string f, double min, double max, int n)
         {
             var inputCons = "(calc-right-integral-coords {0} {1} {2} {3})".Eval<Cons>(f.Eval<Callable>(), min, max, n);
 
             return CreateListOfTuples(inputCons);
         }
 
-        public static double CalcDefiniteIntegral(double min, double max, int n, List<Tuple<double, double>> coords)
+        public static double CalcDefiniteIntegral(double min, double max, int n, IEnumerable<Tuple<double, double>> coords)
         {
-            var ConsDataList = new List<Cons>();
+            var consDataList = new List<Cons>();
             foreach (var obj in coords)
             {
-                ConsDataList.Add(new Cons(obj.Item1, obj.Item2));
+                consDataList.Add(new Cons(obj.Item1, obj.Item2));
             }
-            var ConsDataCons = Cons.FromList(ConsDataList);
+            var consDataCons = Cons.FromList(consDataList);
 
 
-            var result = "(calc-definite-integral {0} {1} {2} {3})".Eval<double>(min, max, n, ConsDataCons);
+            var result = "(calc-definite-integral {0} {1} {2} {3})".Eval<double>(min, max, n, consDataCons);
 
             return result;
         }
 
-        private static List<Tuple<double, double>> CreateListOfTuples(Cons inputCons)
+        public static double CalcDeltaX(double min, double max, int n)
         {
-            List<Tuple<double, double>> PlotDataList = new List<Tuple<double, double>>();
+            return "(calc-delta-x {0} {1} {2})".Eval<double>(min, max, n);
+        }
 
+        private static IEnumerable<Tuple<double, double>> CreateListOfTuples(Cons inputCons)
+        {
             foreach (var obj in inputCons)
             {
                 var plot = (Cons)obj;
@@ -100,9 +103,8 @@ namespace MultiParadigmGrapher.GraphFunctions
                 var x = (dynamic)plot.car;
                 var y = (dynamic)plot.cdr;
 
-                PlotDataList.Add(new Tuple<double, double>((double)x, (double)y));
+                yield return new Tuple<double, double>((double)x, (double)y);
             }
-            return PlotDataList;
         }
     }
 }
