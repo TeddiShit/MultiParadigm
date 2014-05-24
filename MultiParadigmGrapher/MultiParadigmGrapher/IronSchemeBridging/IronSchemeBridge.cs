@@ -13,7 +13,7 @@ namespace MultiParadigmGrapher.IronSchemeBridging
     {
         private static Func<TextWriter, object> SetStdOut { get; set; }
         private static Func<TextWriter, object> SetErrOut { get; set; }
-        private static Func<TextReader, object> SetStdIn { get; set; }
+        public static Func<TextReader, object> SetStdIn { get; private set; }
 
         private static Func<object> resetEnvironment;
 
@@ -90,8 +90,7 @@ namespace MultiParadigmGrapher.IronSchemeBridging
         }
 
         private static void defineDefaultProcedures()
-        {
- 
+        { 
         }
 
         private static void onStdOutOutput(object sender, EventTextWriter.StringEventArgs args)

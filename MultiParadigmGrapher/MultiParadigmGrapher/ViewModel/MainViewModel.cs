@@ -20,6 +20,7 @@ using System.Collections.ObjectModel;
 using System.Collections.Generic;
 using System.Collections;
 using System.Windows.Media;
+using IronScheme.Scripting.Hosting;
 
 
 namespace MultiParadigmGrapher.ViewModel
@@ -48,10 +49,6 @@ namespace MultiParadigmGrapher.ViewModel
         /// </summary>
         public MainViewModel()
         {
-            Functions = new ObservableCollection<GraphFunction>();
-
-            AddFunction();
-
             ApplyFunctionCommand = new RelayCommand(ApplyFunctionExecute, ApplyFunctionCanExecute);
             AddFunctionCommand = new RelayCommand(AddFunction, () => Functions.Count < 12);
             DeleteFunctionCommand = new RelayCommand<IList>(deleteFunctionExecute, deleteFunctionCanExecute);
@@ -63,7 +60,14 @@ namespace MultiParadigmGrapher.ViewModel
 
             LoadSyntaxHighlighting();
             IronSchemeBridge.ResetEnvironment();
-        }        
+
+            IronSchemeBridge.StdOutOutput += IronSchemeBridge_StdOutOutput;
+            IronSchemeBridge.StdErrOutput += IronSchemeBridge_StdErrOutput;
+
+            Functions = new ObservableCollection<GraphFunction>();
+
+            AddFunction();
+        }
 
         //backing
         private TextDocument codeDocument = new TextDocument();
@@ -87,6 +91,8 @@ namespace MultiParadigmGrapher.ViewModel
             set 
             {
                 isXLogarithmic = value;
+
+                xLinearAxis.PositionAtZeroCrossing = yLinearAxis.PositionAtZeroCrossing = IsAllLinear;
 
                 if (value)
                     currentXAxis = xLogarithmicAxis;
@@ -122,6 +128,10 @@ namespace MultiParadigmGrapher.ViewModel
             get { return isYLogarithmic; }
             set
             {
+                isYLogarithmic = value;
+
+                xLinearAxis.PositionAtZeroCrossing = yLinearAxis.PositionAtZeroCrossing = IsAllLinear;
+
                 if (value)
                     currentYAxis = yLogarithmicAxis;
                 else
@@ -138,7 +148,6 @@ namespace MultiParadigmGrapher.ViewModel
 
                 PlotModel.ResetAllAxes();
                 PlotModel.InvalidatePlot(false);
-                isYLogarithmic = value;
                 RaisePropertyChanged();
             }
         }
@@ -151,6 +160,7 @@ namespace MultiParadigmGrapher.ViewModel
                 RaisePropertyChanged();
             }
         }
+        public bool IsAllLinear { get { return !IsXLogarithmic && !IsYLogarithmic; } }
         public double XLogarithmicBase
         {
             get { return xLogarithmicBase; }
@@ -180,18 +190,19 @@ namespace MultiParadigmGrapher.ViewModel
             get { return xMin; }
             set
             {
-                if (value < XMax)
+                if (value < XMax && !(IsXLogarithmic && value < 0))
                 {
                     var old = xMin;
                     xMin = value;
                     if (xMin < old)
                         applyAllFunctions();
 
-                    xMin = value;
                     currentXAxis.AbsoluteMinimum = currentXAxis.Minimum = value;
                     PlotModel.ResetAllAxes();
                     PlotModel.InvalidatePlot(true);
                     RaisePropertyChanged();
+
+                    updateSamples();
                 }
                 else
                 {
@@ -210,12 +221,13 @@ namespace MultiParadigmGrapher.ViewModel
                     xMax = value;
                     if (xMax > old)
                         applyAllFunctions();
-
                     
                     currentXAxis.AbsoluteMaximum = currentXAxis.Maximum = value;
                     PlotModel.ResetAllAxes();
                     PlotModel.InvalidatePlot(true);
                     RaisePropertyChanged();
+
+                    updateSamples();
                 }
                 else
                 {
@@ -228,7 +240,7 @@ namespace MultiParadigmGrapher.ViewModel
             get { return yMin; }
             set
             {
-                if (value < YMax)
+                if (value < YMax && !(IsYLogarithmic && value < 0))
                 {
                     yMin = value;
                     currentYAxis.AbsoluteMinimum = currentYAxis.Minimum = value;
@@ -298,8 +310,8 @@ namespace MultiParadigmGrapher.ViewModel
          
         public ObservableCollection<GraphFunction> Functions { get; set; }
 
-        LinearAxis xLinearAxis = new LinearAxis() { Position = AxisPosition.Bottom  /*, PositionAtZeroCrossing = true */ };
-        LinearAxis yLinearAxis = new LinearAxis() { Position = AxisPosition.Left /*,  PositionAtZeroCrossing = true*/ };
+        LinearAxis xLinearAxis = new LinearAxis() { Position = AxisPosition.Bottom, PositionAtZeroCrossing = true };
+        LinearAxis yLinearAxis = new LinearAxis() { Position = AxisPosition.Left,  PositionAtZeroCrossing = true };
         LogarithmicAxis xLogarithmicAxis = new LogarithmicAxis() { Position = AxisPosition.Bottom};
         LogarithmicAxis yLogarithmicAxis = new LogarithmicAxis() { Position = AxisPosition.Left};
 
@@ -389,24 +401,71 @@ namespace MultiParadigmGrapher.ViewModel
                 }
                 else if (e.PropertyName == "IsEnabled")
                 {
-                    SetFunctionVisibility(graphFunc);
-                    PlotModel.InvalidatePlot(false);
+                    if (graphFunc.PlotSeries != null && graphFunc.DerivedSeries != null && graphFunc.IntegralSeries != null)
+                    {
+                        SetFunctionVisibility(graphFunc);
+                        PlotModel.InvalidatePlot(false);
+                    }
                 }
             }
         }
 
+        private void updateSamples()
+        {
+            foreach (var function in Functions)
+            {
+                function.Step = function.Step; //force calculation of samples
+            }
+        }
+
+        void IronSchemeBridge_StdErrOutput(object sender, EventTextWriter.StringEventArgs e)
+        {
+            if (isApplyFunctionExecuting && !suppressOutput && SelectedFunction != null)
+            {
+                SelectedFunction.Log.Add(new LogEntry(e.Value, LogType.StdErr));
+            }
+        }
+
+        void IronSchemeBridge_StdOutOutput(object sender, EventTextWriter.StringEventArgs e)
+        {
+            if (isApplyFunctionExecuting && !suppressOutput && SelectedFunction != null)
+            {
+                SelectedFunction.Log.Add(new LogEntry(e.Value, LogType.StdOut));
+            }
+        }        
+        
         private bool ApplyFunctionCanExecute()
         {
             return SelectedFunction != null;
         }
 
+        //for handling stdout/stderr events
+        bool suppressOutput = false;
+        bool isApplyFunctionExecuting = false;
         private void ApplyFunctionExecute()
         {
             if (ApplyFunctionCanExecute())
             {
-                SetCodeString(SelectedFunction);
-                applyFunction(SelectedFunction);
-                PlotModel.InvalidatePlot(true);
+                isApplyFunctionExecuting = true;
+                try
+                {
+                    SetCodeString(SelectedFunction);
+                    applyFunction(SelectedFunction);
+                    PlotModel.InvalidatePlot(true);
+                }
+                catch (SyntaxErrorException e)
+                {
+                    SelectedFunction.Log.Add(new LogEntry(e.Message, LogType.SyntaxErr));
+                }
+                catch (SchemeException e)
+                {
+                    SelectedFunction.Log.Add(new LogEntry(e.ToString(), LogType.SchemeError));
+                }
+                catch (Exception e)
+                {
+                    SelectedFunction.Log.Add(new LogEntry(e.Message, LogType.GeneralError));
+                }
+                isApplyFunctionExecuting = false;
             }
         }
 
@@ -414,70 +473,80 @@ namespace MultiParadigmGrapher.ViewModel
         {
             foreach (var func in Functions)
             {
-                applyFunction(func);
+                try
+                {
+                    applyFunction(func);
+                }
+                catch (Exception e)
+                {
+                    MessageBox.Show("Error while reapplying \"" + func.Name + "\": " + e.Message, "Error on reappplying function", MessageBoxButton.OK, MessageBoxImage.Error);
+                    break;
+                }
             }
         }        
 
-        private void applyFunction(GraphFunction function)
+        private void applyFunction(GraphFunction func)
         {
-            try
-            {
-                InitFunctionSeries(function);
+            suppressOutput = true;
+            SchemeMathWrapper.VerifyIsProcedure(func.Code);
+            suppressOutput = false;
 
-                var xydata = SchemeMathWrapper.CalcPlotData(function.Code, XMin, XMax, function.Step);
-                var xydatapoints = xydata.Select( (xy) => new DataPoint(xy.Item1, xy.Item2));
-                function.PlotSeries.Points.Clear();
-                function.PlotSeries.Points.AddRange(xydatapoints);
-                function.PlotSeries.Title = function.Name;
-                
-                if (function.ShowDerivative)
+            InitFunctionSeries(func);
+
+            var xydata = SchemeMathWrapper.CalcPlotData(func.Code, XMin, XMax, func.Step);
+            var xydatapoints = xydata.Select((xy) => new DataPoint(xy.Item1, xy.Item2));
+            func.PlotSeries.Points.Clear();
+            func.PlotSeries.Points.AddRange(xydatapoints);
+            func.PlotSeries.Title = func.Name;
+
+            if (func.ShowDerivative)
+            {
+                var dxydata = SchemeMathWrapper.CalcDerivedPlotData(func.Code, XMin, XMax, func.Step);
+                var dxydatapoints = dxydata.Select((xy) => new DataPoint(xy.Item1, xy.Item2));
+                func.DerivedSeries.Points.Clear();
+                func.DerivedSeries.Points.AddRange(dxydatapoints);
+                func.DerivedSeries.Title = "'" + func.Name;
+
+            }
+
+            if (func.ShowIntegral)
+            {
+                IEnumerable<System.Tuple<double, double>> coords;
+
+                if (func.IsLeftIntegral)
+                    coords = SchemeMathWrapper.CalcLeftIntegralCoords(func.Code, func.IntegralMin,
+                        func.IntegralMax, func.IntegralRes);
+                else if (func.IsMiddleIntegral)
+                    coords = SchemeMathWrapper.CalcMidpointIntegralCoords(func.Code, func.IntegralMin,
+                        func.IntegralMax, func.IntegralRes);
+                else if (func.IsRightIntegral)
+                    coords = SchemeMathWrapper.CalcRightIntegralCoords(func.Code, func.IntegralMin,
+                        func.IntegralMax, func.IntegralRes);
+                else
+                    throw new ArgumentException("Integral mode not selected!");
+
+                var deltaX = SchemeMathWrapper.CalcDeltaX(func.IntegralMin,
+                    func.IntegralMax, func.IntegralRes);
+
+                func.IntegralSeries.Points.Clear();
+                func.IntegralSeries.Points2.Clear();
+                foreach (var coord in coords)
                 {
-                    var dxydata = SchemeMathWrapper.CalcDerivedPlotData(function.Code, XMin, XMax, function.Step);
-                    var dxydatapoints = dxydata.Select((xy) => new DataPoint(xy.Item1, xy.Item2));
-                    function.DerivedSeries.Points.Clear();
-                    function.DerivedSeries.Points.AddRange(dxydatapoints);
-                    function.DerivedSeries.Title = "'" + function.Name;
-                                        
+                    func.IntegralSeries.Points.Add(new DataPoint(coord.Item1, coord.Item2));
+                    func.IntegralSeries.Points.Add(new DataPoint(coord.Item1 + deltaX, coord.Item2));
                 }
 
-                if (function.ShowIntegral)
-                {
-                    //TODO: RIGHT, MIDDLE, LEFT!
+                var bottomLineSeries = new LineSeries();
+                func.IntegralSeries.Points2.Add(new DataPoint(func.IntegralMin, 0));
+                func.IntegralSeries.Points2.Add(new DataPoint(func.IntegralMax, 0));
 
-                    var coords = SchemeMathWrapper.CalcMidpointIntegralCoords(function.Code, function.IntegralMin,
-                        function.IntegralMax, function.IntegralRes);
+                var area = SchemeMathWrapper.CalcDefiniteIntegral(func.IntegralMin,
+                    func.IntegralMax, func.IntegralRes, coords);
 
-                    var deltaX = SchemeMathWrapper.CalcDeltaX(function.IntegralMin,
-                        function.IntegralMax, function.IntegralRes);
-
-                    function.IntegralSeries.Points.Clear();
-                    function.IntegralSeries.Points2.Clear();
-                    foreach (var coord in coords)
-                    {
-                        function.IntegralSeries.Points.Add(new DataPoint(coord.Item1, coord.Item2));
-                        function.IntegralSeries.Points.Add(new DataPoint(coord.Item1 + deltaX, coord.Item2));                        
-                    }
-
-                    var bottomLineSeries = new LineSeries();
-                    function.IntegralSeries.Points2.Add(new DataPoint(function.IntegralMin, 0));
-                    function.IntegralSeries.Points2.Add(new DataPoint(function.IntegralMax, 0));
-
-                    var area = SchemeMathWrapper.CalcDefiniteIntegral(function.IntegralMin,
-                        function.IntegralMax, function.IntegralRes, coords);
-
-                    function.IntegralSeries.Title = function.Name + "(A: " + area.ToString("G5") + ")";
-                }
-
-                SetFunctionVisibility(function);
+                func.IntegralSeries.Title = func.Name + "(A: " + area.ToString("G5") + ")";
             }
-            catch (SyntaxErrorException e)
-            {
-                MessageBox.Show("BITCHES SAYS: " + e.Message);
-            }
-            catch (SchemeException e)
-            {
-                MessageBox.Show("MORE BITCHES " + e.Message);
-            }
+
+            SetFunctionVisibility(func);
         }
 
         private static void SetFunctionVisibility(GraphFunction function)
@@ -561,6 +630,7 @@ namespace MultiParadigmGrapher.ViewModel
         private void AddFunction()
         {
             var func = new GraphFunction();
+            func.Samples = SchemeMathWrapper.StepToSamples(XMin, XMax, func.Step);
             func.PropertyChanged += function_propertyChanged;
             Functions.Add(func);
         }

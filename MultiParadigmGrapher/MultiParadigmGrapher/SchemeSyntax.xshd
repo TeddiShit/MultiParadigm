@@ -219,6 +219,8 @@
 	  <Word>format</Word>
 	  <Word>display</Word>
 	  
+    <Word>expt</Word>
+    <Word>exp</Word>
 	  <Word>floor</Word>
 	  <Word>abs</Word>	  
 	  <Word>apply</Word>

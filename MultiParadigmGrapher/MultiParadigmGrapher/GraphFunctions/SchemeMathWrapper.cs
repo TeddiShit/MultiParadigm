@@ -13,6 +13,11 @@ namespace MultiParadigmGrapher.GraphFunctions
     {
         static SchemeMathWrapper()
         {
+            LoadSchemeFunctions();
+        }
+
+        public static void LoadSchemeFunctions()
+        {
             var uri = new Uri("/graphmath.rkt", UriKind.Relative);
             var info = App.GetContentStream(uri);
 
@@ -22,10 +27,17 @@ namespace MultiParadigmGrapher.GraphFunctions
             }
         }
 
-        // random test
-        public static void SchemeTest()
+        public static void VerifyIsProcedure(string f)
         {
-            int result = "(+ 1 2)".Eval<int>();
+            var obj = f.Eval();
+            try
+            {                
+                var proc = (Callable)obj;
+            }
+            catch (InvalidCastException)
+            {
+                throw new ArgumentException("Input is not a procedure.");
+            }
         }
 
         public static int StepToSamples(double min, double max, double step)
@@ -83,7 +95,6 @@ namespace MultiParadigmGrapher.GraphFunctions
             }
             var consDataCons = Cons.FromList(consDataList);
 
-
             var result = "(calc-definite-integral {0} {1} {2} {3})".Eval<double>(min, max, n, consDataCons);
 
             return result;
@@ -98,11 +109,14 @@ namespace MultiParadigmGrapher.GraphFunctions
         {
             foreach (var obj in inputCons)
             {
-                var plot = (Cons)obj;
+                var pair = (Cons)obj;
 
-                var x = (dynamic)plot.car;
-                var y = (dynamic)plot.cdr;
+                //Unboxing must normally use the exact type.
+                //We use dynamic as we don't know the exact type of the boxed value.  
+                var x = (dynamic)pair.car;
+                var y = (dynamic)pair.cdr;
 
+                //x and y must be castable to double for this to work
                 yield return new Tuple<double, double>((double)x, (double)y);
             }
         }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,6 +24,23 @@ namespace MultiParadigmGrapher
         public MainWindow()
         {
             InitializeComponent();
+        }
+
+        private void logView_Loaded(object sender, RoutedEventArgs args)
+        {
+            var itemsControl = sender as ItemsControl;
+            var scrollViewer = VisualTreeHelper.GetChild(itemsControl, 0) as ScrollViewer;
+
+            var obscollection = itemsControl.ItemsSource as INotifyCollectionChanged;
+
+            obscollection.CollectionChanged += (s, e) =>
+            {
+                if (e.Action == NotifyCollectionChangedAction.Add)
+                {
+                    scrollViewer.ScrollToBottom();
+                }
+            };
+
         }
     }
 }

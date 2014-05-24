@@ -1,6 +1,7 @@
 ﻿using OxyPlot.Series;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -10,10 +11,33 @@ using System.Windows.Media;
 
 namespace MultiParadigmGrapher.GraphFunctions
 {
+    public enum LogType
+    {
+        StdOut,
+        StdErr,
+        SyntaxErr,
+        SchemeError,
+        GeneralError
+    }
+
+    public class LogEntry
+    {
+        public LogEntry(string message, LogType type)
+        {
+            Type = type;
+            Message = message;
+        }
+
+        public LogType Type { get; private set; }
+        public string Message { get; private set; }
+    }
+
     public class GraphFunction : INotifyPropertyChanged
     {
+        //for automatic default name
         static int FunctionCounter = 0;
 
+        //default constructor setting default values
         public GraphFunction()
         {
             FunctionCounter++;
@@ -27,16 +51,21 @@ namespace MultiParadigmGrapher.GraphFunctions
             IntegralMin = -20;
             IntegralRes = 10;
 
+            IsMiddleIntegral = true;
+
             ShowDerivative = false;
             ShowIntegral = false;
             IsEnabled = true;
 
             Color = Brushes.Gray;
+
+            Log = new ObservableCollection<LogEntry>();
         }
 
-        //backing
+        #region Backing fields
         private double step;
         private int samples;
+
         private double integralMax;
         private double integralMin;
         private int integralRes;
@@ -45,9 +74,17 @@ namespace MultiParadigmGrapher.GraphFunctions
         private bool showDerivative;
         private bool showIntegral;
 
+        private bool isLeftIntegral;
+        private bool isMiddleIntegral;
+        private bool isRightIntegral;
+
         private Brush color;
         private string name;
 
+        #endregion
+
+        #region Properties
+        //resolution
         public double Step 
         {
             get { return step; }
@@ -77,6 +114,7 @@ namespace MultiParadigmGrapher.GraphFunctions
             }
         }
 
+        //integral settings
         public double IntegralMin
         {
             get { return integralMin; }
@@ -125,38 +163,51 @@ namespace MultiParadigmGrapher.GraphFunctions
                 }
             }
         }
-
-        public string Code { get; set; }
-        public string Name
+        public bool IsLeftIntegral
         {
-            get { return name; }
-            set 
+            get { return isLeftIntegral; }
+            set
             {
-                if (!string.IsNullOrWhiteSpace(value))
+                isLeftIntegral = value;
+                OnPropertyChanged();
+            }
+        }
+        public bool IsMiddleIntegral
+        {
+            get { return isMiddleIntegral; }
+            set
+            {
+                isMiddleIntegral = value;
+                OnPropertyChanged();
+            }
+        }
+        public bool IsRightIntegral
+        {
+            get { return isRightIntegral; }
+            set
+            {
+                isRightIntegral = value;
+                OnPropertyChanged();
+            }
+        }
+
+        //visibility properties
+        public bool IsEnabled
+        {
+            get { return isEnabled; }
+            set
+            {
+                if (value != isEnabled)
                 {
-                    name = value;
+                    isEnabled = value;
                     OnPropertyChanged();
                 }
             }
         }
-
-        public Brush Color 
-        { 
-            get { return color; } 
-            set 
-            {
-                if (value != color)
-                {
-                    color = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-
-        public bool ShowDerivative 
+        public bool ShowDerivative
         {
             get { return showDerivative; }
-            set 
+            set
             {
                 if (value != showDerivative)
                 {
@@ -176,24 +227,43 @@ namespace MultiParadigmGrapher.GraphFunctions
                     OnPropertyChanged();
                 }
             }
-        }
-        public bool IsEnabled
+        }        
+
+        public string Code { get; set; }
+        public Brush Color
         {
-            get { return isEnabled; }
+            get { return color; }
             set
             {
-                if (value != isEnabled)
+                if (value != color)
                 {
-                    isEnabled = value;
+                    color = value;
                     OnPropertyChanged();
                 }
             }
         }
-
+        public string Name
+        {
+            get { return name; }
+            set 
+            {
+                if (!string.IsNullOrWhiteSpace(value))
+                {
+                    name = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+        
+        //Properties for related OxyPlot series
         public LineSeries PlotSeries { get; set; }
         public LineSeries DerivedSeries { get; set; }
         public AreaSeries IntegralSeries { get; set; }
-    
+
+        public ObservableCollection<LogEntry> Log { get; private set; }
+        #endregion
+
+        #region INotifyPropertyChanged implementation
         public event PropertyChangedEventHandler PropertyChanged;
 
         protected void OnPropertyChanged([CallerMemberName] string name = null)
@@ -202,5 +272,6 @@ namespace MultiParadigmGrapher.GraphFunctions
             if (handler != null)
                 handler(this, new PropertyChangedEventArgs(name));
         }
+        #endregion
     }
 }

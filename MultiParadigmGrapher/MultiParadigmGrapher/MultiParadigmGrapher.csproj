@@ -89,6 +89,7 @@
     <Compile Include="IronSchemeBridging\IronSchemeBridge.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
+    <Compile Include="View\Converters\LogTypeToString.cs" />
     <Compile Include="View\Converters\NullToBooleanConverter.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
