@@ -3,7 +3,6 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:oxy="http://oxyplot.codeplex.com"
         xmlns:avalonEdit="http://icsharpcode.net/sharpdevelop/avalonedit"
-        xmlns:extenders="clr-namespace:MultiParadigmGrapher.View.Extensions"
         Icon="/logo.png"
         DataContext="{Binding Main, Source={StaticResource Locator}}"
         Title="SchemeGrapher" Height="700" Width="1000">

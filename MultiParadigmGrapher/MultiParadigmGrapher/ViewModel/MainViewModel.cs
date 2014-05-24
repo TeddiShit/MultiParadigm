@@ -455,11 +455,11 @@ namespace MultiParadigmGrapher.ViewModel
                 }
                 catch (SyntaxErrorException e)
                 {
-                    SelectedFunction.Log.Add(new LogEntry(e.Message, LogType.SyntaxErr));
+                    SelectedFunction.Log.Add(new LogEntry(RuntimeExtensions.ScriptEngine.FormatException(e), LogType.SyntaxErr));
                 }
                 catch (SchemeException e)
                 {
-                    SelectedFunction.Log.Add(new LogEntry(e.ToString(), LogType.SchemeError));
+                    SelectedFunction.Log.Add(new LogEntry(RuntimeExtensions.ScriptEngine.FormatException(e), LogType.SchemeError));
                 }
                 catch (Exception e)
                 {
