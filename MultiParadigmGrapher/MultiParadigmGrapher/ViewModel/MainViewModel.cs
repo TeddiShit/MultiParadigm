@@ -543,7 +543,7 @@ namespace MultiParadigmGrapher.ViewModel
                 var area = SchemeMathWrapper.CalcDefiniteIntegral(func.IntegralMin,
                     func.IntegralMax, func.IntegralRes, coords);
 
-                func.IntegralSeries.Title = func.Name + "(A: " + area.ToString("G5") + ")";
+                func.IntegralSeries.Title = "''" + func.Name + "(A: " + area.ToString("G5") + ")";
             }
 
             SetFunctionVisibility(func);
