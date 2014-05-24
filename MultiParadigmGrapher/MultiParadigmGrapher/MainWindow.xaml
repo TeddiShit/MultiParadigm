@@ -151,7 +151,7 @@
             <Button Grid.Row="3" Margin="5" Content="Apply" IsDefault="True" Command="{Binding ApplyFunctionCommand}" IsEnabled="{Binding SelectedFunction, Converter={StaticResource NullToBoolean}}" />
 
             <GroupBox Grid.Row="4" Margin="5" Header="Output" IsEnabled="{Binding SelectedFunction, Converter={StaticResource NullToBoolean}}">
-                <ItemsControl ItemsSource="{Binding SelectedFunction.Log}" Style="{StaticResource LogViewerStyle}" 
+                <ItemsControl ItemsSource="{Binding SelectedFunction.Log, NotifyOnTargetUpdated=True}" Style="{StaticResource LogViewerStyle}" 
                               Name="logView" Loaded="logView_Loaded"/>
             </GroupBox>
         </Grid>

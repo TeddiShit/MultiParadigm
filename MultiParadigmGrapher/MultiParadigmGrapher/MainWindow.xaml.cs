@@ -26,21 +26,36 @@ namespace MultiParadigmGrapher
             InitializeComponent();
         }
 
+        ScrollViewer scrollViewer;
+        INotifyCollectionChanged obscollection;
+
+        private void collectionChangedHandler(object sender, NotifyCollectionChangedEventArgs args)
+        {
+            if (args.Action == NotifyCollectionChangedAction.Add)
+            {
+                scrollViewer.ScrollToBottom();
+            }
+        }
+
         private void logView_Loaded(object sender, RoutedEventArgs args)
         {
             var itemsControl = sender as ItemsControl;
-            var scrollViewer = VisualTreeHelper.GetChild(itemsControl, 0) as ScrollViewer;
+            scrollViewer = VisualTreeHelper.GetChild(itemsControl, 0) as ScrollViewer;
 
-            var obscollection = itemsControl.ItemsSource as INotifyCollectionChanged;
-
-            obscollection.CollectionChanged += (s, e) =>
+            obscollection = itemsControl.ItemsSource as INotifyCollectionChanged;
+            obscollection.CollectionChanged += collectionChangedHandler;
+            
+            itemsControl.TargetUpdated += (s, e) =>
             {
-                if (e.Action == NotifyCollectionChangedAction.Add)
+                if (e.Property.Name == "ItemsSource")
                 {
-                    scrollViewer.ScrollToBottom();
+                    if (obscollection != null)
+                        obscollection.CollectionChanged -= collectionChangedHandler;
+
+                    obscollection = itemsControl.ItemsSource as INotifyCollectionChanged;
+                    obscollection.CollectionChanged += collectionChangedHandler;
                 }
             };
-
         }
     }
 }
