@@ -123,13 +123,13 @@
                                     <ColumnDefinition/>
                                     <ColumnDefinition/>
                                 </Grid.ColumnDefinitions>
-                                <RadioButton Grid.Column="0" IsEnabled="{Binding SelectedFunction, Converter={StaticResource NullToBoolean}}" 
+                                <RadioButton Grid.Column="0" IsEnabled="{Binding SelectedFunction.ShowIntegral}" 
                                              IsChecked="{Binding SelectedFunction.IsLeftIntegral, Mode=TwoWay}" Content="Left" Margin="5" 
                                              GroupName="integralmode"/>
-                                <RadioButton Grid.Column="1" IsEnabled="{Binding SelectedFunction, Converter={StaticResource NullToBoolean}}" 
+                                <RadioButton Grid.Column="1" IsEnabled="{Binding SelectedFunction.ShowIntegral}" 
                                              IsChecked="{Binding SelectedFunction.IsMiddleIntegral, Mode=TwoWay}" Content="Middle" Margin="5" 
                                              GroupName="integralmode"/>
-                                <RadioButton Grid.Column="2" IsEnabled="{Binding SelectedFunction, Converter={StaticResource NullToBoolean}}" 
+                                <RadioButton Grid.Column="2" IsEnabled="{Binding SelectedFunction.ShowIntegral}" 
                                              IsChecked="{Binding SelectedFunction.IsRightIntegral, Mode=TwoWay}" Content="Right" Margin="5" 
                                              GroupName="integralmode"/>                                                               
                             </Grid>

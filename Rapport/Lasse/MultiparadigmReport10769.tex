@@ -1,0 +1,61 @@
+\documentclass[12pt]{article}
+\usepackage [utf8]{inputenc}
+\usepackage{moreverb}
+\usepackage{listings}
+\usepackage{graphicx}
+\usepackage{verbatim}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{lastpage}
+\usepackage{xcolor}
+\usepackage[T1]{fontenc}
+\usepackage{zi4}
+
+\usepackage{color}
+\definecolor{bluekeywords}{rgb}{0.13,0.13,1}
+\definecolor{greencomments}{rgb}{0,0.5,0}
+\definecolor{redstrings}{rgb}{0.9,0,0}
+
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\lhead{Multi-Paradigm Assignment\\ TIPLPA Programming Language Paradigms}
+\chead{}
+\rhead{Lasse Brøsted Pedersen\\ 10769 - Group 4}
+\lfoot{}
+\cfoot{}
+\rfoot{Page \thepage ~of \pageref{LastPage}}
+
+\DeclareGraphicsExtensions{.pdf,.png,.jpg}
+\lstset{language=[Sharp]C,
+  showspaces=false,
+  showtabs=false,
+  breaklines=true,
+  showstringspaces=false,
+  breakatwhitespace=true,
+  escapeinside={(*@}{@*)},
+  commentstyle=\color{greencomments},
+  keywordstyle=\color{bluekeywords},
+  stringstyle=\color{redstrings},
+  basicstyle=\ttfamily
+}
+
+\begin{document}
+
+	\section{Architecture of the Application}
+		
+	\begin{lstlisting}
+void LoadSchemeFunctions(IContentProvider contentProvider)
+{
+  var stream = contentProvider.GetStream("/graphmath.rkt");
+  using (var sr = new StreamReader(stream))
+  {
+    sr.ReadToEnd().Eval();
+  }
+}
+	\end{lstlisting}
+	
+	\section{Functionality of the Application}
+	
+	\section{Testing Strategy}	
+	
+\end{document}

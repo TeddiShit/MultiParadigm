@@ -6,22 +6,16 @@ using System.Threading.Tasks;
 using IronScheme;
 using System.IO;
 using IronScheme.Runtime;
+using MultiParadigmGrapher.ContentHandling;
 
 namespace MultiParadigmGrapher.GraphFunctions
 {
-    public class SchemeMathWrapper
+    public static class SchemeMathWrapper
     {
-        static SchemeMathWrapper()
+        public static void LoadSchemeFunctions(IContentProvider contentProvider)
         {
-            LoadSchemeFunctions();
-        }
-
-        public static void LoadSchemeFunctions()
-        {
-            var uri = new Uri("/graphmath.rkt", UriKind.Relative);
-            var info = App.GetContentStream(uri);
-
-            using (var sr = new StreamReader(info.Stream))
+            var stream = contentProvider.GetStream("/graphmath.rkt");
+            using (var sr = new StreamReader(stream))
             {
                 sr.ReadToEnd().Eval();
             }

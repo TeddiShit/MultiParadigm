@@ -83,6 +83,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="ContentHandling\ContentProvider.cs" />
+    <Compile Include="ContentHandling\IContentProvider.cs" />
     <Compile Include="GraphFunctions\GraphFunction.cs" />
     <Compile Include="GraphFunctions\SchemeMathWrapper.cs" />
     <Compile Include="IronSchemeBridging\EventTextWriter.cs" />

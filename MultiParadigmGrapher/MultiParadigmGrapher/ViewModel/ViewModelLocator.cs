@@ -15,6 +15,7 @@
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Ioc;
 using Microsoft.Practices.ServiceLocation;
+using MultiParadigmGrapher.ContentHandling;
 
 namespace MultiParadigmGrapher.ViewModel
 {
@@ -41,6 +42,9 @@ namespace MultiParadigmGrapher.ViewModel
             ////    // Create run time view services and models
             ////    SimpleIoc.Default.Register<IDataService, DataService>();
             ////}
+
+            if (!SimpleIoc.Default.IsRegistered<IContentProvider>())
+                SimpleIoc.Default.Register<IContentProvider, ContentProvider>();
 
             SimpleIoc.Default.Register<MainViewModel>();
         }

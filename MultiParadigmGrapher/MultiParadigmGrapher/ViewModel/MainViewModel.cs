@@ -21,6 +21,7 @@ using System.Collections.Generic;
 using System.Collections;
 using System.Windows.Media;
 using IronScheme.Scripting.Hosting;
+using MultiParadigmGrapher.ContentHandling;
 
 
 namespace MultiParadigmGrapher.ViewModel
@@ -47,7 +48,7 @@ namespace MultiParadigmGrapher.ViewModel
         /// <summary>
         /// Initializes a new instance of the MainViewModel class.
         /// </summary>
-        public MainViewModel()
+        public MainViewModel(IContentProvider contentProvider)
         {
             ApplyFunctionCommand = new RelayCommand(ApplyFunctionExecute, ApplyFunctionCanExecute);
             AddFunctionCommand = new RelayCommand(AddFunction, () => Functions.Count < 12);
@@ -58,8 +59,9 @@ namespace MultiParadigmGrapher.ViewModel
             LogarithmicBases = new List<double> { TEN, TWO, EULER };
             XLogarithmicBase = YLogarithmicBase = TEN;
 
-            LoadSyntaxHighlighting();
+            LoadSyntaxHighlighting(contentProvider);
             IronSchemeBridge.ResetEnvironment();
+            SchemeMathWrapper.LoadSchemeFunctions(contentProvider);
 
             IronSchemeBridge.StdOutOutput += IronSchemeBridge_StdOutOutput;
             IronSchemeBridge.StdErrOutput += IronSchemeBridge_StdErrOutput;
@@ -347,7 +349,6 @@ namespace MultiParadigmGrapher.ViewModel
 
             yLinearAxis.AbsoluteMaximum = yLinearAxis.Maximum = YMax;
             yLinearAxis.AbsoluteMinimum = yLinearAxis.Minimum = YMin;
-
             PlotModel.Axes.Add(yLinearAxis);
 
             //set legend
@@ -592,18 +593,19 @@ namespace MultiParadigmGrapher.ViewModel
             }
         }
 
-        private void LoadSyntaxHighlighting()
+        private void LoadSyntaxHighlighting(IContentProvider contentProvider)
         {
-            var uri = new Uri("/SchemeSyntax.xshd", UriKind.Relative);
-            var info = Application.GetContentStream(uri);
-
-            XshdSyntaxDefinition xshd;
-            using (XmlTextReader reader = new XmlTextReader(info.Stream))
+            if (contentProvider != null)
             {
-                xshd = HighlightingLoader.LoadXshd(reader);
-            }
+                var stream = contentProvider.GetStream("/SchemeSyntax.xshd");
+                XshdSyntaxDefinition xshd;
+                using (XmlTextReader reader = new XmlTextReader(stream))
+                {
+                    xshd = HighlightingLoader.LoadXshd(reader);
+                }
 
-            SyntaxHighlighting = HighlightingLoader.Load(xshd, HighlightingManager.Instance);
+                SyntaxHighlighting = HighlightingLoader.Load(xshd, HighlightingManager.Instance);
+            }
         }
 
         private void SetCodeString(GraphFunction value)

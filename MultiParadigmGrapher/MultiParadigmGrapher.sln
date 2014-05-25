@@ -3,6 +3,8 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Express 2012 for Windows Desktop
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MultiParadigmGrapher", "MultiParadigmGrapher\MultiParadigmGrapher.csproj", "{5C4189A6-8192-40C2-B847-B7A8898D2F31}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MultiParadigmGrapherTest", "MultiParadigmGrapherTest\MultiParadigmGrapherTest.csproj", "{6769210D-2A69-4271-91D9-849044198391}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -13,6 +15,10 @@ Global
 		{5C4189A6-8192-40C2-B847-B7A8898D2F31}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5C4189A6-8192-40C2-B847-B7A8898D2F31}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5C4189A6-8192-40C2-B847-B7A8898D2F31}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6769210D-2A69-4271-91D9-849044198391}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6769210D-2A69-4271-91D9-849044198391}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6769210D-2A69-4271-91D9-849044198391}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6769210D-2A69-4271-91D9-849044198391}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
