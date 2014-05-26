@@ -59,6 +59,8 @@ As required by the assignment, the application is split into two parts: all math
 \end{figure}
 
 As figure \ref{fig:layers} shows, the application is based on .NET with a GUI written in WPF(Windows Presentation Foundation) using the Model-View-ViewModel(MVVM)-pattern. The view presents the graphical interface, and allows the user to interact with the application. AvalonEdit is a custom control for textediting that provides syntax highlighting, and OxyPlot is the charting control used. The viewmodel interacts with the model, the SchemeMathWrapper and presents data to the view.
+
+\subsection{Bridging IronScheme and C\#}
  
 The purpose of the SchemeMathWrapper is to provide the bridge between the imperative C\# application, and the functional Scheme procedures. Bridging involves translating from C\# function calls to Scheme procedure calls, and back and forth between native types of each paradigm.
 
@@ -97,28 +99,46 @@ The overall flow sequence of drawing a single function is a shown in figure \ref
     \label{fig:sequence}
 \end{figure} 
 
+
+
 \begin{itemize}
 \item validation close to model vs gui feedback
 \end{itemize}
 		
 \section{Testing Strategy}	
+The application was tested by two test suites. One test suite was a .NET test written i C\# using the built-in test framework MSTest, which tests the C\# portion of the application. The other test suite was a unit test written in Scheme to test the business logic (ie. mathematical calculations) used for this application. 
+
+The scheme test is performed using the standalone IronScheme interpreter, so as to not introduce any errors that may be caused by hosting IronScheme in a C\# application. 
+Although unit test frameworks are available for scheme, none were used for this project, as having a framework was not essential for showing testing for this small application.
 
 \begin{listing}[H]
 \begin{minted}{scheme}
-;cos(3*x)+sin(x)
-(lambda (x)
-	(+ (cos (* 3 x))
-		(sin x)))
+(define test:calc-plot-data 
+  (equal? (calc-plot-data f 0 2 1/2) expected-plot-data))
 \end{minted}	
 
-\caption{$cos(3*x)+sin(x)$ in Scheme.}
-\label{lst:Scheme1}
+\caption{Scheme test of \code{calc-plot-data}.}
+\label{lst:SchemeTest}
 \end{listing}
 
-\begin{itemize}
-\item unit test Scheme function (from IronScheme interpreter)
-\item test C\# wrapper (integration)
-\item test viewmodel (nowai)
-\end{itemize}
+The C\# portion tested was primarily the C\# wrapper for the IronScheme code, since that is the central part of this application. The role of this test suite is to verify that the bridge works as expected, ie. correct scheme procedures are called with the correct arguments and the conversion to and from the data types of each language works as expected. The test of the wrapper is tested using the same (or equivalent) input and expected output as the pure scheme test to ensure correct behaviour. This however, leads to extra testing, because the same procedure/function is tested twice.
+
+\begin{listing}[H]
+\begin{minted}{csharp}
+[TestMethod]
+public void calcPlotData()
+{
+    var actual = SchemeMathWrapper.CalcPlotData(f, 0, 2, 0.5).ToList();
+
+    CollectionAssert.AreEqual(expectedPlotData, actual);
+}
+\end{minted}	
+
+\caption{Test of C\# wrapper for \code{calc-plot-data}.}
+\label{lst:SchemeTest}
+\end{listing}
+
+Other parts of the application, in particular the viewmodel and  the GraphFunction class representing a single function and related properties should also be tested. These have not been tested in this project, but can be tested in the same manner as the IronScheme wrapper. 
+
 	
 \end{document}

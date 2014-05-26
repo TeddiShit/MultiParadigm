@@ -105,11 +105,17 @@
 (define expected-plot-data '((0 . 0) (1/2 . 1) (1 . 2) (3/2 . 3) (2 . 4)))
 (define expected-midpoint-integral-data '((0 . 1/2) (1/2 . 3/2) (1 . 5/2) (3/2 . 7/2)))
 
-(define test:step->samples (equal? (step->samples 0 10 1/2) 21))
+(define test:step->samples 
+  (equal? (step->samples 0 10 1/2) 21))
 (define test:samples->step (equal? (samples->step 0 10 21) 1/2))
-(define test:calc-plot-data (equal? (calc-plot-data f 0 2 1/2) expected-plot-data))
+(define test:calc-plot-data 
+  (equal? (calc-plot-data f 0 2 1/2) expected-plot-data))
 (define test:calc-midpoint-integral-coords (equal? (calc-midpoint-integral-coords f 0 2 4) expected-midpoint-integral-data))
 (define test:calc-definite-integral (equal? (calc-definite-integral 0 2 4 expected-midpoint-integral-data) 4))
 
 (define run-all-tests 
-  (and test:step->samples test:samples->step test:calc-plot-data test:calc-midpoint-integral-coords test:calc-definite-integral))
+  (and test:step->samples 
+       test:samples->step 
+       test:calc-plot-data 
+       test:calc-midpoint-integral-coords 
+       test:calc-definite-integral))
