@@ -86,8 +86,8 @@ namespace MultiParadigmGrapher.ViewModel
         private double yMin = -20;
         private double yMax = 20;
 
-        LinearAxis xLinearAxis = new LinearAxis() { Position = AxisPosition.Bottom, PositionAtZeroCrossing = true };
-        LinearAxis yLinearAxis = new LinearAxis() { Position = AxisPosition.Left, PositionAtZeroCrossing = true };
+        LinearAxis xLinearAxis = new LinearAxis() { Position = AxisPosition.Bottom, PositionAtZeroCrossing = false };
+        LinearAxis yLinearAxis = new LinearAxis() { Position = AxisPosition.Left, PositionAtZeroCrossing = false };
         LogarithmicAxis xLogarithmicAxis = new LogarithmicAxis() { Position = AxisPosition.Bottom };
         LogarithmicAxis yLogarithmicAxis = new LogarithmicAxis() { Position = AxisPosition.Left };
         #endregion
@@ -102,7 +102,7 @@ namespace MultiParadigmGrapher.ViewModel
             {
                 isXLogarithmic = value;
 
-                xLinearAxis.PositionAtZeroCrossing = yLinearAxis.PositionAtZeroCrossing = IsAllLinear;
+                //xLinearAxis.PositionAtZeroCrossing = yLinearAxis.PositionAtZeroCrossing = IsAllLinear;
 
                 if (value)
                     currentXAxis = xLogarithmicAxis;
@@ -140,7 +140,7 @@ namespace MultiParadigmGrapher.ViewModel
             {
                 isYLogarithmic = value;
 
-                xLinearAxis.PositionAtZeroCrossing = yLinearAxis.PositionAtZeroCrossing = IsAllLinear;
+                //xLinearAxis.PositionAtZeroCrossing = yLinearAxis.PositionAtZeroCrossing = IsAllLinear;
 
                 if (value)
                     currentYAxis = yLogarithmicAxis;
