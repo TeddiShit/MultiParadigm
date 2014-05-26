@@ -71,9 +71,10 @@ namespace MultiParadigmGrapher.ViewModel
             AddFunction();
         }
 
-        //backing
+        #region Backing fields
         private TextDocument codeDocument = new TextDocument();
         private GraphFunction selectedFunction;
+        #region axis fields
         private bool isXLogarithmic = false;
         private bool isXLinear = true;
         private bool isYLogarithmic = false;
@@ -85,7 +86,14 @@ namespace MultiParadigmGrapher.ViewModel
         private double yMin = -20;
         private double yMax = 20;
 
-        //properties
+        LinearAxis xLinearAxis = new LinearAxis() { Position = AxisPosition.Bottom, PositionAtZeroCrossing = true };
+        LinearAxis yLinearAxis = new LinearAxis() { Position = AxisPosition.Left, PositionAtZeroCrossing = true };
+        LogarithmicAxis xLogarithmicAxis = new LogarithmicAxis() { Position = AxisPosition.Bottom };
+        LogarithmicAxis yLogarithmicAxis = new LogarithmicAxis() { Position = AxisPosition.Left };
+        #endregion
+        #endregion
+
+        #region Axis properties
         public IList<double> LogarithmicBases { get; private set; }
         public bool IsXLogarithmic 
         {
@@ -276,6 +284,30 @@ namespace MultiParadigmGrapher.ViewModel
             }
         }
 
+        private Axis currentXAxis
+        {
+            get
+            {
+                return PlotModel.Axes[0];
+            }
+            set
+            {
+                PlotModel.Axes[0] = value;
+            }
+        }
+        private Axis currentYAxis
+        {
+            get
+            {
+                return PlotModel.Axes[1];
+            }
+            set
+            {
+                PlotModel.Axes[1] = value;
+            }
+        }
+        #endregion
+
         public RelayCommand ApplyFunctionCommand { get; private set; }
         public RelayCommand AddFunctionCommand { get; private set; }
         public RelayCommand<IList> DeleteFunctionCommand { get; private set; }
@@ -311,34 +343,6 @@ namespace MultiParadigmGrapher.ViewModel
         }
          
         public ObservableCollection<GraphFunction> Functions { get; set; }
-
-        LinearAxis xLinearAxis = new LinearAxis() { Position = AxisPosition.Bottom, PositionAtZeroCrossing = true };
-        LinearAxis yLinearAxis = new LinearAxis() { Position = AxisPosition.Left,  PositionAtZeroCrossing = true };
-        LogarithmicAxis xLogarithmicAxis = new LogarithmicAxis() { Position = AxisPosition.Bottom};
-        LogarithmicAxis yLogarithmicAxis = new LogarithmicAxis() { Position = AxisPosition.Left};
-
-        private Axis currentXAxis 
-        {
-            get 
-            {
-                return PlotModel.Axes[0];
-            }
-            set 
-            {
-                PlotModel.Axes[0] = value;
-            }
-        }
-        private Axis currentYAxis
-        {
-            get
-            {
-                return PlotModel.Axes[1];
-            }
-            set
-            {
-                PlotModel.Axes[1] = value;
-            }
-        }
 
         private void InitPlotModel()
         {

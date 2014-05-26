@@ -1,4 +1,5 @@
-\documentclass[12pt]{article}
+\documentclass[a4paper,12pt]{article}
+\usepackage[margin=1in]{geometry}
 \usepackage [utf8]{inputenc}
 \usepackage{moreverb}
 \usepackage{listings}
@@ -7,55 +8,113 @@
 \usepackage{amsmath}
 \usepackage{amsfonts}
 \usepackage{lastpage}
-\usepackage{xcolor}
-\usepackage[T1]{fontenc}
-\usepackage{zi4}
+\usepackage{url}
+\usepackage{minted}
 
-\usepackage{color}
-\definecolor{bluekeywords}{rgb}{0.13,0.13,1}
-\definecolor{greencomments}{rgb}{0,0.5,0}
-\definecolor{redstrings}{rgb}{0.9,0,0}
+\usemintedstyle{colorful}
 
 \usepackage{fancyhdr}
 \pagestyle{fancy}
-\lhead{Multi-Paradigm Assignment\\ TIPLPA Programming Language Paradigms}
-\chead{}
+\lhead{Multi-Paradigm Assignment\\ TIPLPA}
+\chead{26-05-2014 \\}
 \rhead{Lasse Brøsted Pedersen\\ 10769 - Group 4}
 \lfoot{}
 \cfoot{}
 \rfoot{Page \thepage ~of \pageref{LastPage}}
 
 \DeclareGraphicsExtensions{.pdf,.png,.jpg}
-\lstset{language=[Sharp]C,
-  showspaces=false,
-  showtabs=false,
-  breaklines=true,
-  showstringspaces=false,
-  breakatwhitespace=true,
-  escapeinside={(*@}{@*)},
-  commentstyle=\color{greencomments},
-  keywordstyle=\color{bluekeywords},
-  stringstyle=\color{redstrings},
-  basicstyle=\ttfamily
-}
+
+\newcommand{\code}[1]{{\fontfamily{pcr}\selectfont #1}}
 
 \begin{document}
 
-	\section{Architecture of the Application}
-		
-	\begin{lstlisting}
-void LoadSchemeFunctions(IContentProvider contentProvider)
+\section{Functionality of the Application}
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[scale=0.5]{schemegraphersscreen1}
+	\caption{Screen dump showing various functionality of the application. }
+    \label{fig:screendump}
+\end{figure}
+
+This window is split up in grids, whereas different options are customizable on how and which functions are to be shown as graphs in the Graph Section on the right side. First of all, a function is to be selected in the upper left corner. These functions are bound to their individual settings, which are shown below the function list in the ‘Function settings’ dropdown box. In the Function list, each function has a checkbox attached which indicates if the selected function is drawn in the Graph Section. The background color of the Function list items matches the respective graphs in the Graph Section to give a better overview of which functions matches which graphs. In addition to this, it is possible to add and remove functions from the list.
+
+The settings of the functions are to be changed and set in the Function settings box. The step size and number of samples can be set to change the resolution of the graph. In addition to this, the derivative and integral can be shown, with additional settings on the integral on the resolution and the minimum and maximum values of the integral calculation. All these settings are only set for the current function selected in the Function list.
+
+Below the settings box, the Function code box is shown. This box is an editable textbox where the code for the corresponding chosen list item in the Function list is shown. This code can be corrected and applied to the Graph Section by clicking the 'Apply' button below the box. 
+The last box in the left side is the Output box. In this box all the output from the applied code is written. This box is also for error messages for syntactical errors and other exceptions.
+
+The right side of the GUI is the Graph section. At the top, some settings are shown, specific to the Graph layout, that is, these functions are valid for all the functions where the left side options are specific for each of the functions. Here the minimum and maximum values of the X and Y axes can be changed, and also if the axes are to linear or logarithmic. Additional logarithmic settings are available for either $log_2$, $log_{10}$ or $ln$.
+The rest of the GUI is the Graph, where the checked functions in the Function list are shown as well as their derivatives and integrals, if checked. The legend shows the functions names and colors. In addition, for the integrals shown, the result of the integral is shown in the legend of the integral.
+
+\section{Architecture}
+
+As required by the assignment, the application is split into two parts: all mathematical calculations are handled in Scheme -  GUI and control flow of the program is handled by the (mostly) imperative language C\#. For this project, the scheme implementation used is IronScheme\footnote{\url{http://ironscheme.codeplex.com/}} which is implemented on the .NET platform, and thus integrates well with C\# and vice versa. The layers of the application is shown in figure \ref{fig:layers}.
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[scale=0.23]{MultiParadigmeBlocks}
+	\caption{Layers of the application}
+    \label{fig:layers}
+\end{figure}
+
+As figure \ref{fig:layers} shows, the application is based on .NET with a GUI written in WPF(Windows Presentation Foundation) using the Model-View-ViewModel(MVVM)-pattern. The view presents the graphical interface, and allows the user to interact with the application. AvalonEdit is a custom control for textediting that provides syntax highlighting, and OxyPlot is the charting control used. The viewmodel interacts with the model, the SchemeMathWrapper and presents data to the view.
+ 
+The purpose of the SchemeMathWrapper is to provide the bridge between the imperative C\# application, and the functional Scheme procedures. Bridging involves translating from C\# function calls to Scheme procedure calls, and back and forth between native types of each paradigm.
+
+\begin{listing}[H]
+\begin{minted}[fontsize=\footnotesize, linenos]{csharp}
+IEnumerable<Tuple<double, double>> CalcPlotData(string f, double min, double max, double step)
 {
-  var stream = contentProvider.GetStream("/graphmath.rkt");
-  using (var sr = new StreamReader(stream))
-  {
-    sr.ReadToEnd().Eval();
-  }
+    var xyCons = "(calc-plot-data {0} {1} {2} {3})".Eval<Cons>(f.Eval(), min, max, step);
+
+    //convert from Cons<Cons> (pseudo) to IEnumerable<Tuple<double, double>>
+    return CreateListOfTuples(xyCons);
 }
-	\end{lstlisting}
-	
-	\section{Functionality of the Application}
-	
-	\section{Testing Strategy}	
+\end{minted}	
+
+\caption{Bridging in \code{SchemeMathWrapper.CalcPlotData()}.}
+\label{lst:SchemeCalcWrap}
+\end{listing}
+
+The C\# function in listing \ref{lst:SchemeCalcWrap} shows how bridging is done in the application. This particular function calculates the xy-coordinate pairs for the scheme procedure \code{f} passed as a string. The string \code{f} is evaluated to obtain a scheme procedure and passed to the evaluation of the scheme expression as argument \code{\{0\}}. Prior to using this function, the scheme procedure \code{calc-plot-data} has been loaded into the IronScheme engine by evaluating the contents of the file \code{schememath.rkt}, which contains regular scheme procedure definitions such as this one:
+
+\begin{minted}[fontsize=\footnotesize]{scheme}
+(define calc-plot-data
+  (lambda (f min max step)
+    ..
+\end{minted}	
+
+Evaluating the function returns a scheme list, represented as the C\# class \code{Cons} (part of IronScheme), where each \code{car} element is a \code{Cons}-pair containing a x and y value. Since IronScheme is based on .NET, it shares most data types (apart from \code{cons}) such as \code{string, int, double, array} and \code{Stream} with other .NET languages. IronScheme provides methods for converting back and forth between IronScheme procedures and .NET delegates allowing functions/procedures to be passed in both directions.
+\\
+
+The overall flow sequence of drawing a single function is a shown in figure \ref{fig:sequence}.
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[scale=0.45]{sequence}
+	\caption{Sequence diagram for calculating plot values (simplified)}
+    \label{fig:sequence}
+\end{figure} 
+		
+\section{Testing Strategy}	
+
+\begin{listing}[H]
+\begin{minted}{scheme}
+;cos(3*x)+sin(x)
+(lambda (x)
+	(+ (cos (* 3 x))
+		(sin x)))
+\end{minted}	
+
+\caption{$cos(3*x)+sin(x)$ in Scheme.}
+\label{lst:Scheme1}
+\end{listing}
+
+\begin{itemize}
+\item unit test Scheme function
+\item test C\# wrapper (integration)
+\item test viewmodel
+\end{itemize}
 	
 \end{document}

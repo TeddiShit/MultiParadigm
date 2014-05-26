@@ -48,36 +48,37 @@ namespace MultiParadigmGrapher.GraphFunctions
 
         public static IEnumerable<Tuple<double, double>> CalcPlotData(string f, double min, double max, double step)
         {
-            var inputCons = "(calc-plot-data {0} {1} {2} {3})".Eval<Cons>(f.Eval<Callable>(), min, max, step);
+            var xyCons = "(calc-plot-data {0} {1} {2} {3})".Eval<Cons>(f.Eval(), min, max, step);
 
-            return CreateListOfTuples(inputCons);
+            //convert from Cons<Cons> (pseudo) to IEnumerable<Tuple<double, double>>
+            return CreateListOfTuples(xyCons);
         }
 
         public static IEnumerable<Tuple<double, double>> CalcDerivedPlotData(string f, double min, double max, double step)
         {
-            var inputCons = "(calc-derived-plot-data {0} {1} {2} {3})".Eval<Cons>(f.Eval<Callable>(), min, max, step);
+            var xyCons = "(calc-derived-plot-data {0} {1} {2} {3})".Eval<Cons>(f.Eval(), min, max, step);
 
-            return CreateListOfTuples(inputCons);
+            return CreateListOfTuples(xyCons); 
         }
 
         public static IEnumerable<Tuple<double, double>> CalcMidpointIntegralCoords(string f, double min, double max, int n)
         {
-            var inputCons = "(calc-midpoint-integral-coords {0} {1} {2} {3})".Eval<Cons>(f.Eval<Callable>(), min, max, n);
+            var xyCons = "(calc-midpoint-integral-coords {0} {1} {2} {3})".Eval<Cons>(f.Eval(), min, max, n);
 
-            return CreateListOfTuples(inputCons);
+            return CreateListOfTuples(xyCons);
         }
 
         public static IEnumerable<Tuple<double, double>> CalcLeftIntegralCoords(string f, double min, double max, int n)
         {
-            var inputCons = "(calc-left-integral-coords {0} {1} {2} {3})".Eval<Cons>(f.Eval<Callable>(), min, max, n);
+            var xyCons = "(calc-left-integral-coords {0} {1} {2} {3})".Eval<Cons>(f.Eval(), min, max, n);
 
-            return CreateListOfTuples(inputCons);
+            return CreateListOfTuples(xyCons);
         }
         public static IEnumerable<Tuple<double, double>> CalcRightIntegralCoords(string f, double min, double max, int n)
         {
-            var inputCons = "(calc-right-integral-coords {0} {1} {2} {3})".Eval<Cons>(f.Eval<Callable>(), min, max, n);
+            var xyCons = "(calc-right-integral-coords {0} {1} {2} {3})".Eval<Cons>(f.Eval(), min, max, n);
 
-            return CreateListOfTuples(inputCons);
+            return CreateListOfTuples(xyCons);
         }
 
         public static double CalcDefiniteIntegral(double min, double max, int n, IEnumerable<Tuple<double, double>> coords)

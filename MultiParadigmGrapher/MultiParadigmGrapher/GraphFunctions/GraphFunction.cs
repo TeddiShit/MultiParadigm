@@ -45,7 +45,11 @@ namespace MultiParadigmGrapher.GraphFunctions
 
             Step = 0.2;
             Samples = 50;
-            Code = "(lambda (x) x)"; //solid start!
+            Code = 
+@";cos(3*x)+sin(x)
+(lambda (x)
+  (+ (cos (* 3 x))
+	 (sin x)))"; 
 
             IntegralMax = 20;
             IntegralMin = -20;
