@@ -30,6 +30,19 @@
 
 \section{Functionality of the Application}
 
+The application meets the requirements outlined in the assignment, and thus allows a user to input arbitrary, continuous, mathematical functions in the form of scheme procedure and have them, including derivative and integral plotted. Figure \ref{fig:screendump} shows the application in action. Highlights include:
+
+\begin{itemize}
+\item Syntax highlighting for scheme code.
+\item Consistent color coding for each function and related dataseries (derivative, integral).
+\item A log of output is associated with each function. Output includes stdout, stderr, syntax errors and other scheme errors.
+\item Automatic conversion between step size and number of samples.
+\item Updating axis values recalculates all functions if necessary.
+\item Support for left-hand, middlepoint and right-hand integration.
+\end{itemize}
+
+\subsection{The User Interface}
+
 \begin{figure}[h]
 	\centering
 	\includegraphics[scale=0.5]{schemegraphersscreen1}
@@ -37,15 +50,14 @@
     \label{fig:screendump}
 \end{figure}
 
-This window is split up in grids, whereas different options are customizable on how and which functions are to be shown as graphs in the Graph Section on the right side. First of all, a function is to be selected in the upper left corner. These functions are bound to their individual settings, which are shown below the function list in the ‘Function settings’ dropdown box. In the Function list, each function has a checkbox attached which indicates if the selected function is drawn in the Graph Section. The background color of the Function list items matches the respective graphs in the Graph Section to give a better overview of which functions matches which graphs. In addition to this, it is possible to add and remove functions from the list.
+First of all, functions are managed from the function list in upper left corner. The list shows the name and color, and allows functions to be disabled/enabled. When a function is selected, its related properties are shown below.
+The 'Function settings' box exposes settings for resolution of the function as either step size or number of samples, along with options for showing derivative and integral. The integral is calculated using the rectangle method, as either left, middle or right-hand.
 
-The settings of the functions are to be changed and set in the Function settings box. The step size and number of samples can be set to change the resolution of the graph. In addition to this, the derivative and integral can be shown, with additional settings on the integral on the resolution and the minimum and maximum values of the integral calculation. All these settings are only set for the current function selected in the Function list.
-
-Below the settings box, the Function code box is shown. This box is an editable textbox where the code for the corresponding chosen list item in the Function list is shown. This code can be corrected and applied to the Graph Section by clicking the 'Apply' button below the box. 
+The syntax highlighted scheme code associated with the function can be seen and edited below the settings box. This box is an editable textbox where the code for the corresponding chosen list item in the Function list is shown. The 'Apply' button below the box calculates and displays the function using the related settings. 
 The last box in the left side is the Output box. In this box all the output from the applied code is written. This box is also for error messages for syntactical errors and other exceptions.
+\\
 
-The right side of the GUI is the Graph section. At the top, some settings are shown, specific to the Graph layout, that is, these functions are valid for all the functions where the left side options are specific for each of the functions. Here the minimum and maximum values of the X and Y axes can be changed, and also if the axes are to linear or logarithmic. Additional logarithmic settings are available for either $log_2$, $log_{10}$ or $ln$.
-The rest of the GUI is the Graph, where the checked functions in the Function list are shown as well as their derivatives and integrals, if checked. The legend shows the functions names and colors. In addition, for the integrals shown, the result of the integral is shown in the legend of the integral.
+The right side of the GUI is the Graph section. At the top, the minimum and maximum values of the X and Y axes can be changed, and also if the axes are to linear or logarithmic. Bases $log_2$, $log_{10}$ or $ln$ are available for logarithmic axes. Lastly, when an integral function is active, the associated legend shows the area of the integral approximation.
 
 \section{Architecture}
 
@@ -58,7 +70,7 @@ As required by the assignment, the application is split into two parts: all math
     \label{fig:layers}
 \end{figure}
 
-As figure \ref{fig:layers} shows, the application is based on .NET with a GUI written in WPF(Windows Presentation Foundation) using the Model-View-ViewModel(MVVM)-pattern. The view presents the graphical interface, and allows the user to interact with the application. AvalonEdit is a custom control for textediting that provides syntax highlighting, and OxyPlot is the charting control used. The viewmodel interacts with the model, the SchemeMathWrapper and presents data to the view.
+As figure \ref{fig:layers} shows, the application is based on .NET with a GUI written in WPF(Windows Presentation Foundation) using the Model-View-ViewModel(MVVM)-pattern. The view presents the graphical interface, and allows the user to interact with the application. AvalonEdit is a custom control for textediting that provides syntax highlighting, and OxyPlot is the charting control used. The ViewModel interacts with the model, the SchemeMathWrapper and presents data to the view.
 
 \subsection{Bridging IronScheme and C\#}
  
@@ -88,9 +100,10 @@ The C\# function in listing \ref{lst:SchemeCalcWrap} shows how bridging is done 
 \end{minted}	
 
 Evaluating the function returns a scheme list, represented as the C\# class \code{Cons} (part of IronScheme), where each \code{car} element is a \code{Cons}-pair containing a x and y value. Since IronScheme is based on .NET, it shares most data types (apart from \code{cons}) such as \code{string, int, double, array} and \code{Stream} with other .NET languages. IronScheme provides methods for converting back and forth between IronScheme procedures and .NET delegates allowing functions/procedures to be passed in both directions.
-\\
 
-The overall flow sequence of drawing a single function is a shown in figure \ref{fig:sequence}.
+\subsection{User interaction}
+
+The overall flow sequence of drawing a single function is a shown in figure \ref{fig:sequence}. The sequence shows the flow, from the user pressing apply on the UI to the plot being drawn.
 
 \begin{figure}[h]
 	\centering
@@ -99,11 +112,7 @@ The overall flow sequence of drawing a single function is a shown in figure \ref
     \label{fig:sequence}
 \end{figure} 
 
-
-
-\begin{itemize}
-\item validation close to model vs gui feedback
-\end{itemize}
+A shortcoming of the of the approach used in this application is the placement of validation of user input. MVVM is build around databindings from one object to another, with bound objects implementing error-reporting interfaces for validation. This concept is not well supported by scheme, so in this application validation of input data is mostly handled in the ViewModel.
 		
 \section{Testing Strategy}	
 The application was tested by two test suites. One test suite was a .NET test written i C\# using the built-in test framework MSTest, which tests the C\# portion of the application. The other test suite was a unit test written in Scheme to test the business logic (ie. mathematical calculations) used for this application. 
@@ -138,7 +147,7 @@ public void calcPlotData()
 \label{lst:SchemeTest}
 \end{listing}
 
-Other parts of the application, in particular the viewmodel and  the GraphFunction class representing a single function and related properties should also be tested. These have not been tested in this project, but can be tested in the same manner as the IronScheme wrapper. 
+Other parts of the application, in particular the ViewModel and  the GraphFunction class representing a single function and related properties should also be tested. These have not been tested in this project, but can be tested in the same manner as the IronScheme wrapper. 
 
 	
 \end{document}
